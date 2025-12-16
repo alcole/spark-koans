@@ -1,5 +1,6 @@
 /**
  * Achievement Badge Page - Shown when all koans are completed
+ * Badge design with static OG image for social sharing
  */
 
 import { useEffect, useState } from 'react';
