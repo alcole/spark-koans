@@ -24,7 +24,7 @@ export default function CompletionModal({ isOpen, onClose, totalKoans }) {
 
           <div className="space-y-3">
             <Link
-              href="/certificate"
+              href="/badge"
               className="block w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
             >
               View Your Achievement Badge 🎓

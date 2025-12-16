@@ -31,7 +31,7 @@ export default function Certificate() {
   const shareUrl = typeof window !== 'undefined' ? window.location.origin : 'https://spark-koans.vercel.app';
 
   // Static OG image URL for badge
-  const ogImageUrl = `https://spark-koans.vercel.app/api/og-certificate?koans=${stats.total}`;
+  const ogImageUrl = `https://spark-koans.vercel.app/api/og-badge?koans=${stats.total}`;
 
   const shareOnTwitter = () => {
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
@@ -87,7 +87,7 @@ export default function Certificate() {
         <meta property="og:title" content="Completed all PySpark Koans!" />
         <meta property="og:description" content={`Successfully completed all ${stats.total} PySpark and Delta Lake exercises. Master your data engineering skills!`} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://spark-koans.vercel.app/certificate" />
+        <meta property="og:url" content="https://spark-koans.vercel.app/badge" />
         <meta property="og:image" content={ogImageUrl} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />

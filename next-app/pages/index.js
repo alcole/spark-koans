@@ -73,7 +73,7 @@ export default function Home() {
             <>
               <div className="text-2xl mb-4">🎉 Congratulations! All koans completed!</div>
               <Link
-                href="/certificate"
+                href="/badge"
                 className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-4 rounded-lg text-lg transition-colors"
               >
                 View Your Achievement Badge 🎓
