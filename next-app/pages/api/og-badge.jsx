@@ -16,119 +16,130 @@ export default async function handler(req) {
             height: '100%',
             width: '100%',
             display: 'flex',
-            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#111827',
-            padding: '40px',
+            background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
           }}
         >
+          {/* Badge Container - More compact, badge-like proportions */}
           <div
             style={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: '#1f2937',
-              border: '8px solid #f97316',
-              borderRadius: '20px',
-              padding: '60px',
-              width: '100%',
-              maxWidth: '1000px',
+              background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)',
+              border: '12px solid #f97316',
+              borderRadius: '30px',
+              padding: '80px 100px',
+              boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)',
+              position: 'relative',
             }}
           >
-            {/* Badge Circle */}
+            {/* Top Icon Circle */}
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '150px',
-                height: '150px',
+                width: '160px',
+                height: '160px',
                 background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-                borderRadius: '75px',
-                marginBottom: '30px',
-                boxShadow: '0 10px 40px rgba(249, 115, 22, 0.3)',
+                borderRadius: '80px',
+                marginBottom: '40px',
+                border: '6px solid #1f2937',
+                boxShadow: '0 15px 30px rgba(249, 115, 22, 0.4)',
               }}
             >
-              <div style={{ fontSize: '80px', display: 'flex' }}>🎓</div>
+              <div style={{ fontSize: '90px', display: 'flex' }}>🎓</div>
             </div>
 
-            {/* Title */}
+            {/* Main Title */}
             <div
               style={{
-                fontSize: '56px',
+                fontSize: '68px',
                 fontWeight: 'bold',
-                color: '#f97316',
-                marginBottom: '20px',
+                color: '#ffffff',
+                marginBottom: '15px',
                 display: 'flex',
+                textAlign: 'center',
+                lineHeight: 1.1,
               }}
             >
-              Achievement Unlocked!
+              PYSPARK KOANS
             </div>
 
-            {/* Divider */}
+            {/* Subtitle */}
             <div
               style={{
-                width: '150px',
-                height: '4px',
-                backgroundColor: '#f97316',
-                marginBottom: '30px',
+                fontSize: '42px',
+                fontWeight: '600',
+                color: '#10b981',
+                marginBottom: '40px',
+                display: 'flex',
+                textAlign: 'center',
+                textTransform: 'uppercase',
+                letterSpacing: '2px',
+              }}
+            >
+              Achievement Program
+            </div>
+
+            {/* Divider Line */}
+            <div
+              style={{
+                width: '300px',
+                height: '3px',
+                background: 'linear-gradient(90deg, transparent 0%, #f97316 50%, transparent 100%)',
+                marginBottom: '35px',
                 display: 'flex',
               }}
             />
 
-            {/* Achievement Title */}
-            <div
-              style={{
-                fontSize: '44px',
-                fontWeight: 'bold',
-                color: '#ffffff',
-                marginBottom: '20px',
-                display: 'flex',
-              }}
-            >
-              PySpark Koans Master
-            </div>
-
-            {/* Description */}
-            <div
-              style={{
-                fontSize: '24px',
-                color: '#9ca3af',
-                marginBottom: '40px',
-                display: 'flex',
-                textAlign: 'center',
-              }}
-            >
-              Successfully completed all {koans} PySpark and Delta Lake exercises
-            </div>
-
-            {/* Stats */}
+            {/* Completion Stats */}
             <div
               style={{
                 display: 'flex',
-                gap: '60px',
-                marginTop: '20px',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '15px',
               }}
             >
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ fontSize: '48px', fontWeight: 'bold', color: '#f97316', display: 'flex' }}>
-                  {koans}
-                </div>
-                <div style={{ fontSize: '18px', color: '#6b7280', display: 'flex' }}>
-                  Koans Completed
-                </div>
+              <div
+                style={{
+                  fontSize: '32px',
+                  color: '#9ca3af',
+                  display: 'flex',
+                  textAlign: 'center',
+                }}
+              >
+                All {koans} Exercises Completed
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ fontSize: '48px', fontWeight: 'bold', color: '#f97316', display: 'flex' }}>
-                  9
-                </div>
-                <div style={{ fontSize: '18px', color: '#6b7280', display: 'flex' }}>
-                  Categories Mastered
-                </div>
+              <div
+                style={{
+                  fontSize: '26px',
+                  color: '#6b7280',
+                  display: 'flex',
+                  textAlign: 'center',
+                }}
+              >
+                PySpark & Delta Lake Mastery
               </div>
             </div>
+
+            {/* Bottom accent */}
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '0',
+                left: '0',
+                right: '0',
+                height: '8px',
+                background: 'linear-gradient(90deg, #ea580c 0%, #f97316 50%, #ea580c 100%)',
+                borderRadius: '0 0 18px 18px',
+                display: 'flex',
+              }}
+            />
           </div>
         </div>
       ),
