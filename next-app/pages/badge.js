@@ -30,8 +30,8 @@ export default function Certificate() {
   const shareText = `🎉 I just completed all ${stats.total} PySpark Koans! Master your PySpark skills through interactive exercises. #PySpark #DataEngineering #Learning`;
   const shareUrl = typeof window !== 'undefined' ? window.location.origin : 'https://spark-koans.vercel.app';
 
-  // Static OG image URL for badge
-  const ogImageUrl = `https://spark-koans.vercel.app/api/og-badge?koans=${stats.total}`;
+  // Static OG image URL for badge (SVG converted to PNG)
+  const ogImageUrl = 'https://spark-koans.vercel.app/api/og-badge';
 
   const shareOnTwitter = () => {
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
@@ -124,51 +124,19 @@ export default function Certificate() {
         ) : (
           <>
             {/* Achievement Badge */}
-            <div
-              id="achievement-badge"
-              className="bg-gradient-to-br from-gray-900 to-gray-800 border-4 border-orange-500 rounded-lg p-12 mb-8 shadow-2xl"
-            >
-              <div className="text-center">
-                {/* Badge Icon */}
-                <div className="mb-6">
-                  <div className="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full mb-4 shadow-lg">
-                    <span className="text-6xl">🎓</span>
-                  </div>
-                  <h1 className="text-4xl font-bold text-orange-500 mb-2">
-                    Achievement Unlocked!
-                  </h1>
-                  <div className="w-32 h-1 bg-orange-500 mx-auto"></div>
-                </div>
-
-                {/* Achievement Details */}
-                <div className="my-8">
-                  <h2 className="text-3xl font-bold text-white mb-4">
-                    PySpark Koans Master
-                  </h2>
-                  <p className="text-gray-400 mb-6 text-lg">
-                    Successfully completed all {stats.total} PySpark and Delta Lake exercises
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    Completed on {completionDate}
-                  </p>
-                </div>
-
-                {/* Stats */}
-                <div className="mt-8 pt-8 border-t border-gray-700">
-                  <div className="flex justify-center items-center gap-8 text-sm text-gray-500">
-                    <div>
-                      <div className="text-3xl font-bold text-orange-500">{stats.total}</div>
-                      <div>Koans Completed</div>
-                    </div>
-                    <div className="w-px h-12 bg-gray-700"></div>
-                    <div>
-                      <div className="text-3xl font-bold text-orange-500">
-                        {Object.keys(stats.byCategory).length}
-                      </div>
-                      <div>Categories Mastered</div>
-                    </div>
-                  </div>
-                </div>
+            <div className="flex justify-center mb-8">
+              <div
+                id="achievement-badge"
+                className="max-w-md"
+              >
+                <img
+                  src="/assets/badge.svg"
+                  alt="PySpark Koans Master Badge"
+                  className="w-full h-auto drop-shadow-2xl"
+                />
+                <p className="text-gray-400 text-center mt-6">
+                  Completed on {completionDate}
+                </p>
               </div>
             </div>
 
