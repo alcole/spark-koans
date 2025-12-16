@@ -130,7 +130,7 @@ export default function Certificate() {
                 className="max-w-md"
               >
                 <img
-                  src="/assets/badge.svg"
+                  src="/assets/badge.png"
                   alt="PySpark Koans Master Badge"
                   className="w-full h-auto drop-shadow-2xl"
                 />
