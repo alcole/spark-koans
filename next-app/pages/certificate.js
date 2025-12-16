@@ -45,11 +45,15 @@ export default function Certificate() {
   const shareText = `🎉 I just completed all ${stats.total} PySpark Koans! Master your PySpark skills through interactive exercises. #PySpark #DataEngineering #Learning`;
   const shareUrl = typeof window !== 'undefined' ? window.location.origin : '';
 
-  // Generate OG image URL with parameters (use production URL for OG tags)
-  const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
-    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-    : (typeof window !== 'undefined' ? window.location.origin : 'https://your-app.vercel.app');
+  // Generate OG image URL with parameters
+  // For server-side rendering (meta tags), use production URL
+  const productionUrl = 'https://spark-koans.vercel.app';
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : productionUrl;
 
+  // Static OG image for meta tags (server-rendered)
+  const staticOgImageUrl = `${productionUrl}/api/og-certificate?name=${encodeURIComponent('A PySpark Master')}&koans=${stats.total}`;
+
+  // Dynamic OG image URL (client-side, for actual user)
   const ogImageUrl = `${baseUrl}/api/og-certificate?name=${encodeURIComponent(userName || 'A PySpark Learner')}&koans=${stats.total}&date=${encodeURIComponent(completionDate || 'Recently')}`;
 
   const shareOnTwitter = () => {
@@ -107,7 +111,7 @@ export default function Certificate() {
         <meta property="og:description" content={`Successfully completed all ${stats.total} PySpark and Delta Lake exercises. Master your data engineering skills!`} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={typeof window !== 'undefined' ? window.location.href : ''} />
-        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:image" content={staticOgImageUrl} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
 
@@ -115,7 +119,7 @@ export default function Certificate() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`${userName || 'I'} completed all PySpark Koans!`} />
         <meta name="twitter:description" content={`Successfully completed all ${stats.total} PySpark and Delta Lake exercises.`} />
-        <meta name="twitter:image" content={ogImageUrl} />
+        <meta name="twitter:image" content={staticOgImageUrl} />
       </Head>
 
       <div className="min-h-screen bg-gray-950 text-gray-100 py-12 px-4">
