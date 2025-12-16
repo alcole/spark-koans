@@ -27,9 +27,9 @@ export default async function handler(req, res) {
         <!-- Background -->
         <rect width="1200" height="630" fill="url(#bgGradient)"/>
 
-        <!-- Centered badge - scaled to 500px height to fit nicely -->
+        <!-- Centered badge - scaled larger for readable text -->
         <g transform="translate(600, 315)">
-          <g transform="scale(1.04) translate(-200, -240)">
+          <g transform="scale(1.25) translate(-200, -240)">
             ${badgeSvg.replace(/<\?xml[^>]*\?>/, '').replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '')}
           </g>
         </g>
