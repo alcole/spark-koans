@@ -286,3 +286,10 @@ export default function Certificate() {
     </>
   );
 }
+
+// Force server-side rendering to ensure OG meta tags are populated
+export async function getServerSideProps() {
+  return {
+    props: {}, // No props needed, just forcing SSR
+  };
+}
