@@ -1,5 +1,5 @@
 /**
- * Certificate Page - Shown when all koans are completed
+ * Achievement Badge Page - Shown when all koans are completed
  */
 
 import { useEffect, useState } from 'react';
@@ -11,19 +11,10 @@ import useKoanProgress from '../src/hooks/useKoanProgress';
 export default function Certificate() {
   const stats = getKoanStats();
   const { progress } = useKoanProgress();
-  const [userName, setUserName] = useState('');
-  const [showNameInput, setShowNameInput] = useState(true);
-  const [completionDate, setCompletionDate] = useState('');
   const [isDownloading, setIsDownloading] = useState(false);
+  const [completionDate, setCompletionDate] = useState('');
 
   useEffect(() => {
-    // Load saved name from localStorage
-    const savedName = localStorage.getItem('pyspark-koans-username');
-    if (savedName) {
-      setUserName(savedName);
-      setShowNameInput(false);
-    }
-
     // Set completion date
     const today = new Date().toLocaleDateString('en-US', {
       year: 'numeric',
@@ -33,28 +24,13 @@ export default function Certificate() {
     setCompletionDate(today);
   }, []);
 
-  const saveName = () => {
-    if (userName.trim()) {
-      localStorage.setItem('pyspark-koans-username', userName.trim());
-      setShowNameInput(false);
-    }
-  };
-
   const isFullyComplete = progress.size === stats.total;
 
   const shareText = `🎉 I just completed all ${stats.total} PySpark Koans! Master your PySpark skills through interactive exercises. #PySpark #DataEngineering #Learning`;
-  const shareUrl = typeof window !== 'undefined' ? window.location.origin : '';
+  const shareUrl = typeof window !== 'undefined' ? window.location.origin : 'https://spark-koans.vercel.app';
 
-  // Generate OG image URL with parameters
-  // For server-side rendering (meta tags), use production URL
-  const productionUrl = 'https://spark-koans.vercel.app';
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : productionUrl;
-
-  // Static OG image for meta tags (server-rendered)
-  const staticOgImageUrl = `${productionUrl}/api/og-certificate?name=${encodeURIComponent('A PySpark Master')}&koans=${stats.total}`;
-
-  // Dynamic OG image URL (client-side, for actual user)
-  const ogImageUrl = `${baseUrl}/api/og-certificate?name=${encodeURIComponent(userName || 'A PySpark Learner')}&koans=${stats.total}&date=${encodeURIComponent(completionDate || 'Recently')}`;
+  // Static OG image URL for badge
+  const ogImageUrl = `https://spark-koans.vercel.app/api/og-certificate?koans=${stats.total}`;
 
   const shareOnTwitter = () => {
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
@@ -66,18 +42,18 @@ export default function Certificate() {
     window.open(url, '_blank', 'width=550,height=500');
   };
 
-  const downloadCertificate = async () => {
+  const downloadBadge = async () => {
     setIsDownloading(true);
     try {
       const html2canvas = (await import('html2canvas')).default;
-      const certificate = document.getElementById('certificate');
+      const badge = document.getElementById('achievement-badge');
 
-      if (!certificate) {
-        alert('Certificate element not found');
+      if (!badge) {
+        alert('Badge element not found');
         return;
       }
 
-      const canvas = await html2canvas(certificate, {
+      const canvas = await html2canvas(badge, {
         backgroundColor: '#111827',
         scale: 2, // Higher quality
         logging: false,
@@ -87,14 +63,14 @@ export default function Certificate() {
       canvas.toBlob((blob) => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
-        link.download = `pyspark-koans-certificate-${userName.replace(/\s+/g, '-').toLowerCase() || 'completion'}.png`;
+        link.download = `pyspark-koans-achievement-badge.png`;
         link.href = url;
         link.click();
         URL.revokeObjectURL(url);
       });
     } catch (error) {
-      console.error('Failed to download certificate:', error);
-      alert('Failed to download certificate. Please try again.');
+      console.error('Failed to download badge:', error);
+      alert('Failed to download badge. Please try again.');
     } finally {
       setIsDownloading(false);
     }
@@ -103,23 +79,23 @@ export default function Certificate() {
   return (
     <>
       <Head>
-        <title>PySpark Koans Certificate - {userName || 'Achievement Unlocked'}</title>
+        <title>PySpark Koans Achievement Badge</title>
         <meta name="description" content={`Completed all ${stats.total} PySpark Koans - Master PySpark through interactive exercises`} />
 
         {/* Open Graph meta tags for social sharing */}
-        <meta property="og:title" content={`${userName || 'I'} completed all PySpark Koans!`} />
+        <meta property="og:title" content="Completed all PySpark Koans!" />
         <meta property="og:description" content={`Successfully completed all ${stats.total} PySpark and Delta Lake exercises. Master your data engineering skills!`} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={typeof window !== 'undefined' ? window.location.href : ''} />
-        <meta property="og:image" content={staticOgImageUrl} />
+        <meta property="og:url" content="https://spark-koans.vercel.app/certificate" />
+        <meta property="og:image" content={ogImageUrl} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
 
         {/* Twitter Card meta tags */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${userName || 'I'} completed all PySpark Koans!`} />
+        <meta name="twitter:title" content="Completed all PySpark Koans!" />
         <meta name="twitter:description" content={`Successfully completed all ${stats.total} PySpark and Delta Lake exercises.`} />
-        <meta name="twitter:image" content={staticOgImageUrl} />
+        <meta name="twitter:image" content={ogImageUrl} />
       </Head>
 
       <div className="min-h-screen bg-gray-950 text-gray-100 py-12 px-4">
@@ -135,7 +111,7 @@ export default function Certificate() {
               You've completed {progress.size} out of {stats.total} koans.
             </p>
             <p className="text-gray-400 mb-8">
-              Complete all koans to earn your certificate!
+              Complete all koans to earn your achievement badge!
             </p>
             <Link
               href="/koans/1"
@@ -146,71 +122,46 @@ export default function Certificate() {
           </div>
         ) : (
           <>
-            {/* Certificate */}
+            {/* Achievement Badge */}
             <div
-              id="certificate"
+              id="achievement-badge"
               className="bg-gradient-to-br from-gray-900 to-gray-800 border-4 border-orange-500 rounded-lg p-12 mb-8 shadow-2xl"
             >
               <div className="text-center">
+                {/* Badge Icon */}
                 <div className="mb-6">
-                  <div className="text-6xl mb-4">🎓</div>
+                  <div className="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full mb-4 shadow-lg">
+                    <span className="text-6xl">🎓</span>
+                  </div>
                   <h1 className="text-4xl font-bold text-orange-500 mb-2">
-                    Certificate of Achievement
+                    Achievement Unlocked!
                   </h1>
                   <div className="w-32 h-1 bg-orange-500 mx-auto"></div>
                 </div>
 
+                {/* Achievement Details */}
                 <div className="my-8">
-                  <p className="text-gray-400 mb-4">This certifies that</p>
-                  {showNameInput ? (
-                    <div className="flex items-center justify-center gap-2 mb-4">
-                      <input
-                        type="text"
-                        value={userName}
-                        onChange={(e) => setUserName(e.target.value)}
-                        placeholder="Enter your name"
-                        className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-xl text-center focus:outline-none focus:border-orange-500"
-                        onKeyPress={(e) => e.key === 'Enter' && saveName()}
-                      />
-                      <button
-                        onClick={saveName}
-                        className="px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg transition-colors"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  ) : (
-                    <h2 className="text-3xl font-bold text-white mb-4">
-                      {userName}
-                      <button
-                        onClick={() => setShowNameInput(true)}
-                        className="ml-2 text-sm text-gray-500 hover:text-gray-400"
-                      >
-                        (edit)
-                      </button>
-                    </h2>
-                  )}
-                  <p className="text-gray-400 mb-6">has successfully completed</p>
-                  <h3 className="text-2xl font-semibold text-orange-400 mb-6">
-                    PySpark Koans
-                  </h3>
-                  <p className="text-gray-400 mb-2">
-                    Mastering PySpark through {stats.total} interactive exercises
+                  <h2 className="text-3xl font-bold text-white mb-4">
+                    PySpark Koans Master
+                  </h2>
+                  <p className="text-gray-400 mb-6 text-lg">
+                    Successfully completed all {stats.total} PySpark and Delta Lake exercises
                   </p>
                   <p className="text-gray-500 text-sm">
                     Completed on {completionDate}
                   </p>
                 </div>
 
+                {/* Stats */}
                 <div className="mt-8 pt-8 border-t border-gray-700">
                   <div className="flex justify-center items-center gap-8 text-sm text-gray-500">
                     <div>
-                      <div className="text-2xl font-bold text-orange-500">{stats.total}</div>
+                      <div className="text-3xl font-bold text-orange-500">{stats.total}</div>
                       <div>Koans Completed</div>
                     </div>
                     <div className="w-px h-12 bg-gray-700"></div>
                     <div>
-                      <div className="text-2xl font-bold text-orange-500">
+                      <div className="text-3xl font-bold text-orange-500">
                         {Object.keys(stats.byCategory).length}
                       </div>
                       <div>Categories Mastered</div>
@@ -222,15 +173,15 @@ export default function Certificate() {
 
             {/* Download & Share Section */}
             <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center">
-              <h2 className="text-2xl font-bold mb-4">Download & Share</h2>
+              <h2 className="text-2xl font-bold mb-4">Download & Share Your Achievement</h2>
               <p className="text-gray-400 mb-6">
-                Download your certificate or share your achievement
+                Download your badge or share on social media
               </p>
 
               {/* Download Button */}
               <div className="mb-6">
                 <button
-                  onClick={downloadCertificate}
+                  onClick={downloadBadge}
                   disabled={isDownloading}
                   className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
                 >
@@ -247,7 +198,7 @@ export default function Certificate() {
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                       </svg>
-                      Download Certificate (PNG)
+                      Download Badge (PNG)
                     </>
                   )}
                 </button>
@@ -285,11 +236,4 @@ export default function Certificate() {
       </div>
     </>
   );
-}
-
-// Force server-side rendering to ensure OG meta tags are populated
-export async function getServerSideProps() {
-  return {
-    props: {}, // No props needed, just forcing SSR
-  };
 }
