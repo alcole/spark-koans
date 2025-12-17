@@ -8,8 +8,11 @@ export const config = {
 
 export default async function handler(req, res) {
   try {
-    // Read the pre-rendered PNG badge
-    const badgePath = join(process.cwd(), 'public', 'assets', 'badge.png');
+    // Get track from query parameter (default to pyspark-fundamentals)
+    const { track = 'pyspark-fundamentals' } = req.query;
+
+    // Read the pre-rendered PNG badge for the specified track
+    const badgePath = join(process.cwd(), 'public', 'assets', 'badges', `${track}.png`);
     const badgeBuffer = readFileSync(badgePath);
 
     // Get badge metadata to calculate sizing
