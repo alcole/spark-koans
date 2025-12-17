@@ -1,102 +1,103 @@
 /**
- * Landing Page / Dashboard
+ * Coming Soon Landing Page for spark-koans.com
  */
 
-import Link from 'next/link';
-import { getAllCategories, getKoanStats, getKoansByCategory } from '../src/koans';
-import useKoanProgress from '../src/hooks/useKoanProgress';
+import Head from 'next/head';
 
-export default function Home() {
-  const stats = getKoanStats();
-  const categories = getAllCategories();
-  const { progress } = useKoanProgress();
-
-  const completedCount = progress.size || 0;
-  const progressPercentage = stats.total > 0
-    ? Math.round((completedCount / stats.total) * 100)
-    : 0;
-
+export default function ComingSoon() {
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100">
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-orange-500 mb-4">
+    <>
+      <Head>
+        <title>PySpark Koans - Coming Soon</title>
+        <meta name="description" content="Master PySpark and Delta Lake through interactive exercises. Coming soon to spark-koans.com" />
+      </Head>
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse-glow {
+          0%, 100% { box-shadow: 0 0 40px rgba(249, 115, 22, 0.3); }
+          50% { box-shadow: 0 0 60px rgba(249, 115, 22, 0.5); }
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 1s ease-out forwards;
+        }
+
+        .animate-pulse-glow {
+          animation: pulse-glow 3s ease-in-out infinite;
+        }
+
+        .delay-200 { animation-delay: 0.2s; opacity: 0; }
+        .delay-400 { animation-delay: 0.4s; opacity: 0; }
+        .delay-600 { animation-delay: 0.6s; opacity: 0; }
+        .delay-800 { animation-delay: 0.8s; opacity: 0; }
+      `}</style>
+
+      <div className="bg-gray-950 text-gray-100 min-h-screen flex items-center justify-center p-6">
+        <div className="max-w-4xl w-full text-center">
+          {/* Badge Image */}
+          <div className="flex justify-center mb-8 animate-fadeIn">
+            <div className="animate-pulse-glow rounded-full p-4">
+              <img
+                src="/assets/badges/pyspark-fundamentals.png"
+                alt="PySpark Koans Badge"
+                className="w-64 h-auto drop-shadow-2xl"
+              />
+            </div>
+          </div>
+
+          {/* Main Heading */}
+          <h1 className="text-6xl md:text-7xl font-bold text-orange-500 mb-6 animate-fadeIn delay-200">
             PySpark Koans
           </h1>
-          <p className="text-xl text-gray-400">
-            Learn PySpark and Delta Lake through interactive exercises
+
+          {/* Subheading */}
+          <p className="text-2xl md:text-3xl text-gray-300 mb-4 animate-fadeIn delay-400">
+            Master PySpark Through Practice
           </p>
-        </div>
 
-        <div className="bg-gray-900 rounded-lg border border-gray-800 p-8 mb-8">
-          <h2 className="text-2xl font-semibold mb-4">Progress</h2>
-          <div className="grid grid-cols-3 gap-6 text-center">
-            <div>
-              <div className="text-3xl font-bold text-orange-500">{stats.total}</div>
-              <div className="text-gray-400">Total Koans</div>
+          {/* Description */}
+          <p className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto animate-fadeIn delay-600">
+            Interactive exercises to learn PySpark and Delta Lake.
+            Complete koans, earn achievement badges, and become a data engineering expert.
+          </p>
+
+          {/* Coming Soon Badge */}
+          <div className="inline-block bg-orange-600 text-white px-8 py-4 rounded-lg text-xl font-semibold mb-12 animate-fadeIn delay-800">
+            Coming Soon
+          </div>
+
+          {/* Features Grid */}
+          <div className="grid md:grid-cols-3 gap-8 mt-16 animate-fadeIn delay-800">
+            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-orange-500 transition-colors">
+              <div className="text-4xl mb-4">🎯</div>
+              <h3 className="text-xl font-semibold mb-2 text-orange-400">Interactive Learning</h3>
+              <p className="text-gray-400">Hands-on exercises that teach by doing</p>
             </div>
-            <div>
-              <div className="text-3xl font-bold text-green-500">{completedCount}</div>
-              <div className="text-gray-400">Completed</div>
+
+            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-orange-500 transition-colors">
+              <div className="text-4xl mb-4">🏆</div>
+              <h3 className="text-xl font-semibold mb-2 text-orange-400">Achievement Badges</h3>
+              <p className="text-gray-400">Earn badges as you complete tracks</p>
             </div>
-            <div>
-              <div className="text-3xl font-bold text-blue-500">{progressPercentage}%</div>
-              <div className="text-gray-400">Progress</div>
+
+            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-orange-500 transition-colors">
+              <div className="text-4xl mb-4">📊</div>
+              <h3 className="text-xl font-semibold mb-2 text-orange-400">Track Your Progress</h3>
+              <p className="text-gray-400">Multiple learning paths for all levels</p>
             </div>
           </div>
-        </div>
 
-        <div className="mb-8">
-          <h2 className="text-2xl font-semibold mb-4">Categories</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {categories.map(category => {
-              const categoryKoans = getKoansByCategory(category);
-              const count = categoryKoans.length;
-              const firstKoanId = categoryKoans.length > 0 ? categoryKoans[0].id : 1;
-
-              return (
-                <Link
-                  key={category}
-                  href={`/koans/${firstKoanId}`}
-                  className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-orange-500 transition-colors"
-                >
-                  <h3 className="text-xl font-semibold mb-2">{category}</h3>
-                  <p className="text-gray-400">{count} koans</p>
-                </Link>
-              );
-            })}
+          {/* Footer */}
+          <div className="mt-16 text-gray-500 text-sm">
+            <p>Preparing an amazing learning experience for you</p>
           </div>
-        </div>
-
-        <div className="text-center space-y-4">
-          {completedCount === stats.total && completedCount > 0 ? (
-            <>
-              <div className="text-2xl mb-4">🎉 Congratulations! All koans completed!</div>
-              <Link
-                href="/badge"
-                className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-4 rounded-lg text-lg transition-colors"
-              >
-                View Your Achievement Badge 🎓
-              </Link>
-              <div>
-                <Link
-                  href="/koans/1"
-                  className="inline-block text-orange-500 hover:text-orange-400 underline"
-                >
-                  Continue practicing
-                </Link>
-              </div>
-            </>
-          ) : (
-            <Link
-              href="/koans/1"
-              className="inline-block bg-orange-600 hover:bg-orange-700 text-white font-semibold px-8 py-4 rounded-lg text-lg transition-colors"
-            >
-              {completedCount > 0 ? 'Continue Learning →' : 'Start Learning →'}
-            </Link>
-          )}
         </div>
       </div>
-    </div>
+    </>
   );
 }
