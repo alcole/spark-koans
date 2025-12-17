@@ -3,15 +3,66 @@
  * Each track has its own completion requirements and badge
  */
 
+import koansById, { getKoanIdsByCategories, getKoanIdsByExamCoverage } from '../koans';
+
+// Cache for resolved koan IDs per track
+const trackKoanIdsCache = new Map();
+
+/**
+ * Resolve track definition to actual koan IDs
+ * Supports both category-based and exam-based tracks
+ */
+function resolveTrackKoanIds(track) {
+  // Category-based tracks
+  if (track.requiredCategories && track.requiredCategories.length > 0) {
+    return getKoanIdsByCategories(track.requiredCategories);
+  }
+
+  // Exam coverage tracks
+  if (track.examCoverage) {
+    return getKoanIdsByExamCoverage(track.examCoverage);
+  }
+
+  // Legacy: explicit koan IDs (for backward compatibility)
+  if (track.requiredKoanIds && Array.isArray(track.requiredKoanIds)) {
+    return track.requiredKoanIds;
+  }
+
+  return [];
+}
+
+/**
+ * Get required koan IDs for a track (with caching)
+ */
+function getTrackKoanIds(trackId) {
+  // Return from cache if available
+  if (trackKoanIdsCache.has(trackId)) {
+    return trackKoanIdsCache.get(trackId);
+  }
+
+  const track = tracks[trackId];
+  if (!track) return [];
+
+  const koanIds = resolveTrackKoanIds(track);
+  trackKoanIdsCache.set(trackId, koanIds);
+
+  return koanIds;
+}
+
 export const tracks = {
   'pyspark-fundamentals': {
     id: 'pyspark-fundamentals',
     name: 'PySpark Fundamentals',
     description: 'Master PySpark core concepts and operations',
-    // Include all koans except Delta Lake (101-110)
-    requiredKoanIds: [
-      1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16,
-      17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
+    requiredCategories: [
+      'Basics',
+      'Column Operations',
+      'String Functions',
+      'Aggregations',
+      'Joins',
+      'Window Functions',
+      'Null Handling',
+      'Advanced'
     ],
     badge: {
       title: 'PySpark Koans Master',
@@ -25,11 +76,16 @@ export const tracks = {
     id: 'pyspark-advanced',
     name: 'PySpark Advanced',
     description: 'Complete mastery including Delta Lake',
-    // All koans including Delta Lake
-    requiredKoanIds: [
-      1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16,
-      17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-      101, 102, 103, 104, 105, 106, 107, 108, 109, 110
+    requiredCategories: [
+      'Basics',
+      'Column Operations',
+      'String Functions',
+      'Aggregations',
+      'Joins',
+      'Window Functions',
+      'Null Handling',
+      'Advanced',
+      'Delta Lake'
     ],
     badge: {
       title: 'PySpark Advanced Master',
@@ -37,6 +93,32 @@ export const tracks = {
       ogImage: '/api/og-badge?track=pyspark-advanced'
     },
     order: 2,
+  },
+
+  'de-associate-prep': {
+    id: 'de-associate-prep',
+    name: 'DE Associate Prep',
+    description: 'Prepare for Databricks Data Engineer Associate certification',
+    examCoverage: 'DEA',
+    badge: {
+      title: 'DE Associate Ready',
+      image: '/assets/badges/de-associate-prep.png',
+      ogImage: '/api/og-badge?track=de-associate-prep'
+    },
+    order: 3,
+  },
+
+  'data-analyst-prep': {
+    id: 'data-analyst-prep',
+    name: 'Data Analyst Prep',
+    description: 'Prepare for Databricks Data Analyst Associate certification',
+    examCoverage: 'DAA',
+    badge: {
+      title: 'Data Analyst Ready',
+      image: '/assets/badges/data-analyst-prep.png',
+      ogImage: '/api/og-badge?track=data-analyst-prep'
+    },
+    order: 4,
   },
 };
 
@@ -64,7 +146,8 @@ export function isTrackCompleted(trackId, completedKoanIds) {
   const track = tracks[trackId];
   if (!track) return false;
 
-  return track.requiredKoanIds.every(koanId => completedKoanIds.has(koanId));
+  const requiredIds = getTrackKoanIds(trackId);
+  return requiredIds.every(koanId => completedKoanIds.has(koanId));
 }
 
 /**
@@ -77,9 +160,10 @@ export function getTrackProgress(trackId, completedKoanIds) {
   const track = tracks[trackId];
   if (!track) return null;
 
-  const completed = track.requiredKoanIds.filter(id => completedKoanIds.has(id)).length;
-  const total = track.requiredKoanIds.length;
-  const percentage = Math.round((completed / total) * 100);
+  const requiredIds = getTrackKoanIds(trackId);
+  const completed = requiredIds.filter(id => completedKoanIds.has(id)).length;
+  const total = requiredIds.length;
+  const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
 
   return {
     completed,

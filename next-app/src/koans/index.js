@@ -171,4 +171,32 @@ export function getKoanStats() {
   };
 }
 
+/**
+ * Get koan IDs by categories
+ * @param {Array<string>} categories - Array of category names
+ * @returns {Array<number>} Sorted array of koan IDs
+ */
+export function getKoanIdsByCategories(categories) {
+  if (!categories || categories.length === 0) {
+    return [];
+  }
+
+  return Object.values(koansById)
+    .filter(koan => categories.includes(koan.category))
+    .map(koan => koan.id)
+    .sort((a, b) => a - b);
+}
+
+/**
+ * Get koans filtered by exam coverage
+ * @param {string} examCode - Exam code (e.g., 'DEA', 'DAA', 'MLA')
+ * @returns {Array<number>} Sorted array of koan IDs
+ */
+export function getKoanIdsByExamCoverage(examCode) {
+  return Object.values(koansById)
+    .filter(koan => koan.examCoverage && koan.examCoverage.includes(examCode))
+    .map(koan => koan.id)
+    .sort((a, b) => a - b);
+}
+
 export default koansById;
