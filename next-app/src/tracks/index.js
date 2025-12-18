@@ -3,24 +3,19 @@
  * Each track has its own completion requirements and badge
  */
 
-import koansById, { getKoanIdsByCategories, getKoanIdsByExamCoverage } from '../koans';
+import koansById, { getKoanIdsByCategories } from '../koans';
 
 // Cache for resolved koan IDs per track
 const trackKoanIdsCache = new Map();
 
 /**
  * Resolve track definition to actual koan IDs
- * Supports both category-based and exam-based tracks
+ * Supports both category-based and ID-based tracks
  */
 function resolveTrackKoanIds(track) {
   // Category-based tracks
   if (track.requiredCategories && track.requiredCategories.length > 0) {
     return getKoanIdsByCategories(track.requiredCategories);
-  }
-
-  // Exam coverage tracks
-  if (track.examCoverage) {
-    return getKoanIdsByExamCoverage(track.examCoverage);
   }
 
   // Legacy: explicit koan IDs (for backward compatibility)
@@ -93,32 +88,6 @@ export const tracks = {
       ogImage: '/api/og-badge?track=pyspark-advanced'
     },
     order: 2,
-  },
-
-  'de-associate-prep': {
-    id: 'de-associate-prep',
-    name: 'DE Associate Prep',
-    description: 'Prepare for Databricks Data Engineer Associate certification',
-    examCoverage: 'DEA',
-    badge: {
-      title: 'DE Associate Ready',
-      image: '/assets/badges/de-associate-prep.png',
-      ogImage: '/api/og-badge?track=de-associate-prep'
-    },
-    order: 3,
-  },
-
-  'data-analyst-prep': {
-    id: 'data-analyst-prep',
-    name: 'Data Analyst Prep',
-    description: 'Prepare for Databricks Data Analyst Associate certification',
-    examCoverage: 'DAA',
-    badge: {
-      title: 'Data Analyst Ready',
-      image: '/assets/badges/data-analyst-prep.png',
-      ogImage: '/api/og-badge?track=data-analyst-prep'
-    },
-    order: 4,
   },
 };
 
