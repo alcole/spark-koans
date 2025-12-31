@@ -39,8 +39,9 @@ const cleanFunctions = functionsShim
   .replace(/^from \.core import Column\n/m, ''); // Remove relative import
 
 const cleanWindow = windowShim
-  .replace(/"""[\s\S]*?"""\n/g, '')
-  .replace(/^from \.core import Column\n/m, ''); // Remove relative import
+  .replace(/"""[\s\S]*?"""\n\n/, '')
+  .replace(/^from \.core import Column\n/m, '')
+  .replace(/^\n+/gm, '\n'); // Remove extra blank lines
 
 const cleanIO = ioShim
   .replace(/"""[\s\S]*?"""\n\n/, '')

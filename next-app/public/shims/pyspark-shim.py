@@ -720,10 +720,9 @@ def coalesce(*cols):
 
 # ============ WINDOW FUNCTIONS ============
 
-
-
 class WindowSpec:
-        unboundedPreceding = "unboundedPreceding"
+    """Window specification for window functions"""
+    unboundedPreceding = "unboundedPreceding"
     unboundedFollowing = "unboundedFollowing"
     currentRow = "currentRow"
 
@@ -757,9 +756,9 @@ class WindowSpec:
         new_spec._row_end = end
         return new_spec
 
-
 class Window:
-        unboundedPreceding = "unboundedPreceding"
+    """Window functions factory"""
+    unboundedPreceding = "unboundedPreceding"
     unboundedFollowing = "unboundedFollowing"
     currentRow = "currentRow"
 
@@ -771,39 +770,39 @@ class Window:
     def orderBy(*cols):
         return WindowSpec().orderBy(*cols)
 
-
 # ============ WINDOW FUNCTIONS ============
 def row_number():
-        col = Column("row_number")
+    """Assign sequential row numbers within partitions"""
+    col = Column("row_number")
     col._window_func = 'row_number'
     col._is_window_func = True
     return col
 
-
 def rank():
-        col = Column("rank")
+    """Assign ranks with gaps"""
+    col = Column("rank")
     col._window_func = 'rank'
     col._is_window_func = True
     return col
 
-
 def dense_rank():
-        col = Column("dense_rank")
+    """Assign ranks without gaps"""
+    col = Column("dense_rank")
     col._window_func = 'dense_rank'
     col._is_window_func = True
     return col
 
-
 def lag(col_name, offset=1, default=None):
-        col = Column(col_name)
+    """Access previous row value"""
+    col = Column(col_name)
     col._window_func = 'lag'
     col._window_args = {'offset': offset, 'default': default}
     col._is_window_func = True
     return col
 
-
 def lead(col_name, offset=1, default=None):
-        col = Column(col_name)
+    """Access next row value"""
+    col = Column(col_name)
     col._window_func = 'lead'
     col._window_args = {'offset': offset, 'default': default}
     col._is_window_func = True
