@@ -22,6 +22,11 @@ const windowShim = fs.readFileSync(
   'utf8'
 );
 
+const ioShim = fs.readFileSync(
+  path.join(__dirname, '../src/shims/pyspark/io.py'),
+  'utf8'
+);
+
 // Remove module docstrings and imports that won't work in single file
 const cleanCore = coreShim
   .replace(/"""[\s\S]*?"""\n\n/, '') // Remove module docstring
@@ -36,6 +41,12 @@ const cleanFunctions = functionsShim
 const cleanWindow = windowShim
   .replace(/"""[\s\S]*?"""\n/g, '')
   .replace(/^from \.core import Column\n/m, ''); // Remove relative import
+
+const cleanIO = ioShim
+  .replace(/"""[\s\S]*?"""\n\n/, '')
+  .replace(/^import pandas as pd\n/m, '')
+  .replace(/^from \.core import.*\n/gm, '')
+  .replace(/^from \.catalog import.*\n/gm, '');
 
 // Bundle everything together
 const bundledShim = `# PySpark Shim - Complete bundled version
@@ -53,6 +64,9 @@ ${cleanFunctions}
 # ============ WINDOW FUNCTIONS ============
 ${cleanWindow}
 
+# ============ I/O CLASSES ============
+${cleanIO}
+
 # ============ MODULE SETUP ============
 # Create proper module structure for imports
 pyspark_module = ModuleType('pyspark')
@@ -66,6 +80,8 @@ pyspark_sql_module.Column = Column
 pyspark_sql_module.DataFrame = DataFrame
 pyspark_sql_module.SparkSession = SparkSession
 pyspark_sql_module.GroupedData = GroupedData
+pyspark_sql_module.DataFrameWriter = DataFrameWriter
+pyspark_sql_module.DataFrameReader = DataFrameReader
 
 # Add all functions to pyspark.sql.functions
 pyspark_sql_functions_module.col = col
