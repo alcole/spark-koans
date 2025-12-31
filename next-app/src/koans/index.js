@@ -46,6 +46,26 @@ import koan107 from './delta/koan-107-delete-with-condition';
 import koan108 from './delta/koan-108-update-with-condition';
 import koan109 from './delta/koan-109-create-table-with-builder';
 import koan110 from './delta/koan-110-vacuum-old-files';
+import koan201 from './unity-catalog/koan-201-create-catalog-and-schema';
+import koan202 from './unity-catalog/koan-202-create-managed-table';
+import koan203 from './unity-catalog/koan-203-create-external-table';
+import koan204 from './unity-catalog/koan-204-grant-permissions';
+import koan205 from './unity-catalog/koan-205-revoke-permissions';
+import koan206 from './unity-catalog/koan-206-information-schema';
+import koan207 from './unity-catalog/koan-207-table-properties';
+import koan208 from './unity-catalog/koan-208-create-views';
+import koan209 from './unity-catalog/koan-209-table-acls';
+import koan210 from './unity-catalog/koan-210-three-level-namespace';
+import koan301 from './pandas-on-spark/koan-301-pyspark-to-pandas';
+import koan302 from './pandas-on-spark/koan-302-indexing-loc-iloc';
+import koan303 from './pandas-on-spark/koan-303-dataframe-operations';
+import koan304 from './pandas-on-spark/koan-304-series-operations';
+import koan305 from './pandas-on-spark/koan-305-index-operations';
+import koan306 from './pandas-on-spark/koan-306-groupby-pandas-style';
+import koan307 from './pandas-on-spark/koan-307-merge-and-join';
+import koan308 from './pandas-on-spark/koan-308-string-methods';
+import koan309 from './pandas-on-spark/koan-309-type-conversion';
+import koan310 from './pandas-on-spark/koan-310-to-spark-and-pandas';
 
 /**
  * All koans indexed by ID
@@ -90,6 +110,26 @@ const koansById = {
   108: koan108,
   109: koan109,
   110: koan110,
+  201: koan201,
+  202: koan202,
+  203: koan203,
+  204: koan204,
+  205: koan205,
+  206: koan206,
+  207: koan207,
+  208: koan208,
+  209: koan209,
+  210: koan210,
+  301: koan301,
+  302: koan302,
+  303: koan303,
+  304: koan304,
+  305: koan305,
+  306: koan306,
+  307: koan307,
+  308: koan308,
+  309: koan309,
+  310: koan310,
 };
 
 /**
@@ -129,7 +169,9 @@ export function getAllCategories() {
     'Window Functions',
     'Null Handling',
     'Advanced',
-    'Delta Lake'
+    'Delta Lake',
+    'Unity Catalog',
+    'Pandas API on Spark'
   ];
 
   const categories = [...new Set(Object.values(koansById).map(k => k.category))];
