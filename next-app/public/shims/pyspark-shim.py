@@ -3,6 +3,7 @@
 import pandas as pd
 import sys
 from types import ModuleType
+from typing import List, Any, Optional, Union
 
 # ============ CORE CLASSES ============
 
@@ -26,7 +27,7 @@ class Row(dict):
 # ============ COLUMN CLASS ============
 class Column:
     """PySpark-like Column class for expressions"""
-    def __init__(self, name, expr=None):
+    def __init__(self, name: str, expr: Optional[str] = None):
         self.name = name
         self.expr = expr or name
         self._alias = None
@@ -168,8 +169,9 @@ class GroupedData:
         return DataFrame(result_pdf)
 
     def pivot(self, pivot_col):
-        # Pivot not implemented in browser shim
-        raise NotImplementedError("pivot() is not implemented in the browser shim")
+        # Simple pivot implementation
+        from .dataframe import PivotBuilder
+        return PivotBuilder(self._df, self._group_cols, pivot_col)
 
 
 # ============ DATAFRAME CLASS ============
@@ -184,8 +186,8 @@ class DataFrame:
 
     @property
     def write(self):
-        # Write not implemented in browser shim
-        raise NotImplementedError("write is not implemented in the browser shim")
+        from .io import DataFrameWriter
+        return DataFrameWriter(self)
 
     def count(self):
         return len(self._pdf)
@@ -354,12 +356,15 @@ class SparkSession:
     """Simplified SparkSession for browser environment"""
     @property
     def read(self):
-        # Read not implemented in browser shim
-        raise NotImplementedError("read is not implemented in the browser shim")
+        from .io import DataFrameReader
+        return DataFrameReader(self)
 
     def createDataFrame(self, data, schema):
         pdf = pd.DataFrame(data, columns=schema)
         return DataFrame(pdf)
+
+    # NOTE: sql() and table() methods are added by unity-catalog-shim.py
+    # when it's loaded. This avoids import errors when Unity Catalog is not loaded.
 
 
 # Create global spark session
@@ -703,9 +708,8 @@ def coalesce(*cols):
 
 # ============ WINDOW FUNCTIONS ============
 
-
-
 class WindowSpec:
+    """Window specification for window functions"""
     unboundedPreceding = "unboundedPreceding"
     unboundedFollowing = "unboundedFollowing"
     currentRow = "currentRow"
@@ -740,8 +744,8 @@ class WindowSpec:
         new_spec._row_end = end
         return new_spec
 
-
 class Window:
+    """Window functions factory"""
     unboundedPreceding = "unboundedPreceding"
     unboundedFollowing = "unboundedFollowing"
     currentRow = "currentRow"
@@ -754,43 +758,139 @@ class Window:
     def orderBy(*cols):
         return WindowSpec().orderBy(*cols)
 
-
 # ============ WINDOW FUNCTIONS ============
 def row_number():
+    """Assign sequential row numbers within partitions"""
     col = Column("row_number")
     col._window_func = 'row_number'
     col._is_window_func = True
     return col
 
-
 def rank():
+    """Assign ranks with gaps"""
     col = Column("rank")
     col._window_func = 'rank'
     col._is_window_func = True
     return col
 
-
 def dense_rank():
+    """Assign ranks without gaps"""
     col = Column("dense_rank")
     col._window_func = 'dense_rank'
     col._is_window_func = True
     return col
 
-
 def lag(col_name, offset=1, default=None):
+    """Access previous row value"""
     col = Column(col_name)
     col._window_func = 'lag'
     col._window_args = {'offset': offset, 'default': default}
     col._is_window_func = True
     return col
 
-
 def lead(col_name, offset=1, default=None):
+    """Access next row value"""
     col = Column(col_name)
     col._window_func = 'lead'
     col._window_args = {'offset': offset, 'default': default}
     col._is_window_func = True
     return col
+
+
+# ============ I/O CLASSES ============
+
+
+class DataFrameWriter:
+    """Writer interface for saving DataFrames to tables"""
+
+    def __init__(self, df):
+        self._df = df
+        self._mode = "error"  # error, overwrite, append, ignore
+        self._format = "delta"  # delta, parquet, etc. (mostly cosmetic)
+
+    def mode(self, mode: str):
+        """
+        Set write mode:
+        - error: Throw error if table exists (default)
+        - overwrite: Overwrite existing table
+        - append: Append to existing table
+        - ignore: Silently ignore if table exists
+        """
+        self._mode = mode.lower()
+        return self
+
+    def format(self, source: str):
+        """Set format (delta, parquet, etc.) - noop in shim"""
+        self._format = source.lower()
+        return self
+
+    def saveAsTable(self, name: str):
+        """
+        Save DataFrame as table in Unity Catalog.
+        Name can be:
+        - 'table' -> saved to current catalog.schema.table
+        - 'schema.table' -> saved to current catalog.schema.table
+        - 'catalog.schema.table' -> saved with full path
+        """
+        # Import here to avoid circular dependency
+        from .catalog import CatalogManager
+
+        # Check if table exists
+        try:
+            existing_df = CatalogManager.get_table(name)
+            table_exists = True
+        except:
+            table_exists = False
+
+        # Handle mode logic
+        if table_exists:
+            if self._mode == "error":
+                raise ValueError(f"Table {name} already exists. Use mode('overwrite') or mode('append')")
+            elif self._mode == "ignore":
+                return  # Do nothing
+            elif self._mode == "append":
+                # Append data to existing table
+                import pandas as pd
+                existing_pdf = existing_df._pdf
+                combined_pdf = pd.concat([existing_pdf, self._df._pdf], ignore_index=True)
+                from .core import DataFrame
+                self._df = DataFrame(combined_pdf)
+            # overwrite mode continues to register_table below
+
+        # Register the table
+        CatalogManager.register_table(name, self._df, is_managed=True)
+
+    def save(self, path: str):
+        """Alias for saveAsTable for compatibility"""
+        return self.saveAsTable(path)
+
+
+class DataFrameReader:
+    """Reader interface for loading DataFrames from tables"""
+
+    def __init__(self, spark_session):
+        self._spark = spark_session
+        self._format = "delta"
+
+    def format(self, source: str):
+        """Set format (delta, parquet, etc.) - noop in shim"""
+        self._format = source.lower()
+        return self
+
+    def table(self, name: str):
+        """
+        Read table by name from Unity Catalog.
+        Name can be:
+        - 'table' -> reads from current catalog.schema.table
+        - 'schema.table' -> reads from current catalog.schema.table
+        - 'catalog.schema.table' -> reads with full path
+        """
+        from .catalog import CatalogManager
+        return CatalogManager.get_table(name)
+
+    def load(self, path: str):
+        """Alias for table for compatibility"""
+        return self.table(path)
 
 
 # ============ MODULE SETUP ============
@@ -806,6 +906,8 @@ pyspark_sql_module.Column = Column
 pyspark_sql_module.DataFrame = DataFrame
 pyspark_sql_module.SparkSession = SparkSession
 pyspark_sql_module.GroupedData = GroupedData
+pyspark_sql_module.DataFrameWriter = DataFrameWriter
+pyspark_sql_module.DataFrameReader = DataFrameReader
 
 # Add all functions to pyspark.sql.functions
 pyspark_sql_functions_module.col = col

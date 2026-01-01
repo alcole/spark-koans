@@ -26,9 +26,16 @@ export default function KoanPage({ koan }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
 
-  const { pyodide, isLoading, error: pyodideError } = usePyodide();
+  const { pyodide, isLoading, error: pyodideError, loadUnityCatalogShim } = usePyodide();
   const { markComplete, isComplete, progress } = useKoanProgress();
   const stats = getKoanStats();
+
+  // Load Unity Catalog shim for koans 201-210
+  useEffect(() => {
+    if (koan && koan.id >= 201 && koan.id <= 210 && pyodide && loadUnityCatalogShim) {
+      loadUnityCatalogShim();
+    }
+  }, [koan, pyodide, loadUnityCatalogShim]);
 
   // Initialize code when koan changes
   useEffect(() => {

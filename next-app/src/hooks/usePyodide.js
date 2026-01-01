@@ -17,6 +17,7 @@ export default function usePyodide() {
   const [shimsLoaded, setShimsLoaded] = useState({
     pyspark: false,
     delta: false,
+    unityCatalog: false,
   });
 
   useEffect(() => {
@@ -79,11 +80,30 @@ export default function usePyodide() {
     }
   };
 
+  /**
+   * Load Unity Catalog shim on demand
+   */
+  const loadUnityCatalogShim = async () => {
+    if (!pyodide || shimsLoaded.unityCatalog) return;
+
+    try {
+      const ucShimResponse = await fetch('/shims/unity-catalog-shim.py');
+      const ucShim = await ucShimResponse.text();
+      await pyodide.runPythonAsync(ucShim);
+      setShimsLoaded(prev => ({ ...prev, unityCatalog: true }));
+      console.log('✓ Unity Catalog shim loaded');
+    } catch (err) {
+      console.error('Failed to load Unity Catalog shim:', err);
+      throw err;
+    }
+  };
+
   return {
     pyodide,
     isLoading,
     error,
     shimsLoaded,
     loadDeltaShim,
+    loadUnityCatalogShim,
   };
 }
