@@ -3,6 +3,7 @@
 import pandas as pd
 import sys
 from types import ModuleType
+from typing import List, Any, Optional, Union
 
 # ============ CORE CLASSES ============
 
@@ -362,21 +363,8 @@ class SparkSession:
         pdf = pd.DataFrame(data, columns=schema)
         return DataFrame(pdf)
 
-    def sql(self, sqlQuery: str):
-        """
-        Execute SQL query and return DataFrame.
-        Supports Unity Catalog DDL/DQL/ACL commands.
-        """
-        from .sql import execute_sql
-        return execute_sql(sqlQuery, self)
-
-    def table(self, tableName: str):
-        """
-        Read table by name from Unity Catalog.
-        Name can be 'table', 'schema.table', or 'catalog.schema.table'
-        """
-        from .catalog import CatalogManager
-        return CatalogManager.get_table(tableName)
+    # NOTE: sql() and table() methods are added by unity-catalog-shim.py
+    # when it's loaded. This avoids import errors when Unity Catalog is not loaded.
 
 
 # Create global spark session

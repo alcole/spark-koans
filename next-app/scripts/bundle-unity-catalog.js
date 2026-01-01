@@ -56,6 +56,21 @@ if pyspark_sql:
     pyspark_sql.current_catalog = current_catalog
     pyspark_sql.current_database = current_database
 
+# ============ PATCH SPARKSESSION WITH SQL METHODS ============
+# Add sql() and table() methods to SparkSession class
+def _spark_sql(self, sqlQuery: str):
+    """Execute SQL query and return DataFrame"""
+    return execute_sql(sqlQuery, self)
+
+def _spark_table(self, tableName: str):
+    """Read table by name from Unity Catalog"""
+    return CatalogManager.get_table(tableName)
+
+# Get SparkSession class from pyspark.sql module
+if pyspark_sql and hasattr(pyspark_sql, 'SparkSession'):
+    pyspark_sql.SparkSession.sql = _spark_sql
+    pyspark_sql.SparkSession.table = _spark_table
+
 print("✓ Unity Catalog shim loaded (complete bundle)")
 `;
 

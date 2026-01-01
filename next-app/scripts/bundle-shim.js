@@ -31,7 +31,7 @@ const ioShim = fs.readFileSync(
 const cleanCore = coreShim
   .replace(/"""[\s\S]*?"""\n\n/, '') // Remove module docstring
   .replace(/^import pandas as pd\n/m, '') // Will add at top
-  .replace(/^from typing import.*\n/gm, ''); // Remove typing imports
+  .replace(/^from typing import.*\n/gm, ''); // Will add at top
 
 const cleanFunctions = functionsShim
   .replace(/"""[\s\S]*?"""\n\n/, '')
@@ -55,6 +55,7 @@ const bundledShim = `# PySpark Shim - Complete bundled version
 import pandas as pd
 import sys
 from types import ModuleType
+from typing import List, Any, Optional, Union
 
 # ============ CORE CLASSES ============
 ${cleanCore}
