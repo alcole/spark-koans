@@ -55,7 +55,7 @@ print("✓ All conversions complete")
 
 # Perform calculations with converted types
 total_value = (psdf["price"] * psdf["quantity"]).sum()
-print(f"\\nTotal value: ${total_value:.2f}")
+print(f"\\nTotal value: {total_value}")
 assert total_value > 0, "Total value should be calculated"
 print("✓ Calculations work with converted types")
 
