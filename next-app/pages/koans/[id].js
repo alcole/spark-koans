@@ -15,11 +15,13 @@ import Sidebar from '../../src/components/Sidebar';
 import CompletionModal from '../../src/components/CompletionModal';
 import usePyodide from '../../src/hooks/usePyodide';
 import useKoanProgress from '../../src/hooks/useKoanProgress';
+import { parseAndFormatError, detectUnreplacedPlaceholders } from '../../src/utils/errorParser';
 
 export default function KoanPage({ koan }) {
   const router = useRouter();
   const [code, setCode] = useState('');
   const [output, setOutput] = useState('');
+  const [error, setError] = useState(null);
   const [showHints, setShowHints] = useState(false);
   const [currentHint, setCurrentHint] = useState(0);
   const [showSolution, setShowSolution] = useState(false);
@@ -35,6 +37,7 @@ export default function KoanPage({ koan }) {
     if (koan) {
       setCode(koan.template);
       setOutput('');
+      setError(null);
       setShowHints(false);
       setCurrentHint(0);
       setShowSolution(false);
@@ -44,10 +47,20 @@ export default function KoanPage({ koan }) {
   const runCode = async () => {
     if (!pyodide) {
       setOutput('❌ Python environment not ready');
+      setError(null);
+      return;
+    }
+
+    // Check for unreplaced placeholders before running
+    const placeholderCheck = detectUnreplacedPlaceholders(code);
+    if (placeholderCheck.hasPlaceholders) {
+      setError(placeholderCheck.error);
+      setOutput('');
       return;
     }
 
     setOutput('Running...\\n');
+    setError(null);
 
     try {
       // Run setup code
@@ -71,6 +84,7 @@ _stdout_capture.getvalue()
 `);
 
       setOutput(capturedOutput);
+      setError(null);
 
       // Check if koan is complete
       if (capturedOutput.includes('🎉 Koan complete!')) {
@@ -88,8 +102,11 @@ _stdout_capture.getvalue()
           }, 1000); // Small delay for celebration effect
         }
       }
-    } catch (error) {
-      setOutput(`Error:\\n${error.message}\\n\\nTip: Check your syntax and make sure you replaced all ___ placeholders.`);
+    } catch (err) {
+      // Parse and format the error
+      const formattedError = parseAndFormatError(err, { koan });
+      setError(formattedError);
+      setOutput('');
     }
   };
 
@@ -109,6 +126,7 @@ _stdout_capture.getvalue()
   const resetCode = () => {
     setCode(koan.template);
     setOutput('');
+    setError(null);
   };
 
   const navigateToKoan = (newId) => {
@@ -239,7 +257,7 @@ _stdout_capture.getvalue()
                   showingSolution={showSolution}
                 />
 
-                <OutputPanel output={output} />
+                <OutputPanel output={output} error={error} />
 
                 {/* Navigation */}
                 <div className="flex justify-between">
