@@ -16,10 +16,10 @@ export default function CompletionModal({ isOpen, onClose, totalKoans }) {
             Congratulations!
           </h2>
           <p className="text-gray-300 mb-2">
-            You've completed all {totalKoans} PySpark Koans!
+            You&apos;ve completed all {totalKoans} PySpark Koans!
           </p>
           <p className="text-gray-400 mb-6">
-            You've mastered PySpark fundamentals and Delta Lake operations.
+            You&apos;ve mastered PySpark fundamentals and Delta Lake operations.
           </p>
 
           <div className="space-y-3">
