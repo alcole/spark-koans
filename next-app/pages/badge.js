@@ -109,7 +109,7 @@ export default function Certificate() {
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-12 text-center">
             <h1 className="text-3xl font-bold mb-4">Keep Going!</h1>
             <p className="text-gray-400 mb-4">
-              You've completed {progress.size} out of {stats.total} koans.
+              You&apos;ve completed {progress.size} out of {stats.total} koans.
             </p>
             <p className="text-gray-400 mb-8">
               Complete all koans to earn your achievement badge!
