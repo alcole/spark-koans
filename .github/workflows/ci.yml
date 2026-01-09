@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        cache-dependency-path: next-app/package-lock.json
+
+    - name: Install dependencies
+      working-directory: next-app
+      run: npm ci
+
+    - name: Cache Next.js build
+      uses: actions/cache@v3
+      with:
+        path: |
+          next-app/.next/cache
+        key: ${{ runner.os }}-nextjs-${{ hashFiles('next-app/package-lock.json') }}-${{ hashFiles('next-app/**/*.js', 'next-app/**/*.jsx', 'next-app/**/*.ts', 'next-app/**/*.tsx') }}
+        restore-keys: |
+          ${{ runner.os }}-nextjs-${{ hashFiles('next-app/package-lock.json') }}-
+
+    - name: Run ESLint
+      working-directory: next-app
+      run: npm run lint
+
+    - name: Build application
+      working-directory: next-app
+      run: npm run build
