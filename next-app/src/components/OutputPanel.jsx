@@ -3,7 +3,15 @@
  * Displays code execution results with appropriate styling
  */
 
-export default function OutputPanel({ output }) {
+import ErrorDisplay from './ErrorDisplay';
+
+export default function OutputPanel({ output, error }) {
+  // If there's a structured error, display it using ErrorDisplay
+  if (error) {
+    return <ErrorDisplay error={error} />;
+  }
+
+  // Otherwise, display normal output
   const getOutputStyle = () => {
     if (output.includes('🎉')) return 'text-green-400';
     if (output.includes('Error') || output.includes('❌')) return 'text-red-400';
