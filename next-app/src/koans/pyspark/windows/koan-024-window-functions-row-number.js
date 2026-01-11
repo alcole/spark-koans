@@ -7,6 +7,7 @@ export default {
     id: 24,
     title: "Window Functions - Row Number",
     category: "Window Functions",
+    difficulty: "advanced",
     description: "Assign sequential row numbers within groups. Replace ___ with the correct code.",
     setup: `
 from pyspark.sql.window import Window

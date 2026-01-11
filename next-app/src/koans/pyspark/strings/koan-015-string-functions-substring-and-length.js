@@ -7,13 +7,14 @@ export default {
     id: 15,
     title: "String Functions - Substring and Length",
     category: "String Functions",
+    difficulty: "beginner",
     description: "Extract parts of strings and measure length. Replace ___ with the correct code.",
     setup: `
 data = [("Alice",), ("Bob",), ("Charlotte",)]
 df = spark.createDataFrame(data, ["name"])
 `,
     template: `# Get the length of each name
-from pyspark.sql.functions import length, substring
+from pyspark.sql.functions import length, substring, col
 
 result = df.withColumn("name_length", ___(col("name")))
 lengths = [row["name_length"] for row in result.collect()]

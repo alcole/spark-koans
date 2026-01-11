@@ -7,13 +7,14 @@ export default {
     id: 16,
     title: "String Functions - Trim and Pad",
     category: "String Functions",
+    difficulty: "beginner",
     description: "Remove or add whitespace. Replace ___ with the correct code.",
     setup: `
 data = [("  Alice  ",), ("Bob",), (" Charlie ",)]
 df = spark.createDataFrame(data, ["name"])
 `,
     template: `# Trim whitespace from both sides
-from pyspark.sql.functions import trim, ltrim, rtrim, lpad, rpad
+from pyspark.sql.functions import trim, ltrim, rtrim, lpad, rpad, col
 
 result = df.withColumn("trimmed", ___(col("name")))
 trimmed = [row["trimmed"] for row in result.collect()]

@@ -7,6 +7,7 @@ export default {
     id: 28,
     title: "Union DataFrames",
     category: "Advanced",
+    difficulty: "intermediate",
     description: "Combine DataFrames vertically. Replace ___ with the correct code.",
     setup: `
 df1 = spark.createDataFrame([("Alice", 34), ("Bob", 45)], ["name", "age"])

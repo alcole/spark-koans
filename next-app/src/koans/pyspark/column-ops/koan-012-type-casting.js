@@ -7,12 +7,15 @@ export default {
     id: 12,
     title: "Type Casting",
     category: "Column Operations",
+    difficulty: "beginner",
     description: "Cast columns to different data types. Replace ___ with the correct code.",
     setup: `
 data = [("Alice", "34"), ("Bob", "45")]
 df = spark.createDataFrame(data, ["name", "age_str"])
 `,
     template: `# Cast age_str from string to integer
+from pyspark.sql.functions import col
+
 result = df.withColumn("age", col("age_str").cast("___"))
 
 # Verify we can do math on the new column

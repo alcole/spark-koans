@@ -7,6 +7,7 @@ export default {
     id: 27,
     title: "Handling Nulls - Fill and Drop",
     category: "Null Handling",
+    difficulty: "intermediate",
     description: "Replace or remove null values. Replace ___ with the correct code.",
     setup: `
 data = [("Alice", 34), ("Bob", None), (None, 29), ("Diana", None)]

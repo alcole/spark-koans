@@ -7,6 +7,7 @@ export default {
     id: 26,
     title: "Handling Nulls - Detection",
     category: "Null Handling",
+    difficulty: "intermediate",
     description: "Detect and filter null values. Replace ___ with the correct code.",
     setup: `
 data = [("Alice", 34), ("Bob", None), ("Charlie", 29), (None, 45)]

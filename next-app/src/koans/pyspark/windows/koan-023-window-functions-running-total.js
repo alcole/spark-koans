@@ -7,6 +7,7 @@ export default {
     id: 23,
     title: "Window Functions - Running Total",
     category: "Window Functions",
+    difficulty: "advanced",
     description: "Use window functions to calculate running totals. Replace ___ with the correct code.",
     setup: `
 from pyspark.sql.window import Window

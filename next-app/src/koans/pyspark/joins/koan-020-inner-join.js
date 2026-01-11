@@ -7,6 +7,7 @@ export default {
     id: 20,
     title: "Inner Join",
     category: "Joins",
+    difficulty: "intermediate",
     description: "Join two DataFrames to combine related data. Replace ___ with the correct code.",
     setup: `
 employees = spark.createDataFrame([
@@ -22,6 +23,8 @@ departments = spark.createDataFrame([
 ], ["dept_id", "dept_name"])
 `,
     template: `# Join employees with departments on dept_id
+from pyspark.sql.functions import col
+
 result = employees.___(departments, ___, "inner")
 
 # Should have 3 rows (all employees have matching departments)

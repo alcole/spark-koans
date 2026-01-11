@@ -7,6 +7,7 @@ export default {
     id: 22,
     title: "Join on Multiple Columns",
     category: "Joins",
+    difficulty: "intermediate",
     description: "Join on multiple columns. Replace ___ with the correct code.",
     setup: `
 orders = spark.createDataFrame([
@@ -21,6 +22,8 @@ targets = spark.createDataFrame([
 ], ["year", "quarter", "target"])
 `,
     template: `# Join on both year and quarter
+from pyspark.sql.functions import col
+
 result = orders.join(targets, [___, ___], "inner")
 
 # Should have 3 rows

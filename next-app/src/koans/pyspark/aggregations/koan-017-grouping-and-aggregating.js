@@ -7,6 +7,7 @@ export default {
     id: 17,
     title: "Grouping and Aggregating",
     category: "Aggregations",
+    difficulty: "intermediate",
     description: "Group data and calculate aggregates. Replace ___ with the correct code.",
     setup: `
 data = [
@@ -19,7 +20,7 @@ data = [
 df = spark.createDataFrame(data, ["department", "name", "salary"])
 `,
     template: `# Group by department and calculate average salary
-from pyspark.sql.functions import avg, round
+from pyspark.sql.functions import avg, round, col
 
 result = df.___("department").agg(
     round(___("salary"), 2).alias("avg_salary")
