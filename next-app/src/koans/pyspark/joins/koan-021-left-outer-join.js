@@ -7,6 +7,7 @@ export default {
     id: 21,
     title: "Left Outer Join",
     category: "Joins",
+    difficulty: "intermediate",
     description: "Keep all rows from the left DataFrame, even without matches. Replace ___ with the correct code.",
     setup: `
 employees = spark.createDataFrame([
@@ -21,6 +22,8 @@ departments = spark.createDataFrame([
 ], ["dept_id", "dept_name"])
 `,
     template: `# Left join to keep all employees, even without matching dept
+from pyspark.sql.functions import col
+
 result = employees.join(departments, "dept_id", "___")
 
 # Should have 3 rows (all employees kept)

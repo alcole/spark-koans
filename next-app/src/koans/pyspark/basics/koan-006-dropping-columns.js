@@ -7,6 +7,7 @@ export default {
     id: 6,
     title: "Dropping Columns",
     category: "Basics",
+    difficulty: "beginner",
     description: "Remove columns from a DataFrame. Replace ___ with the correct code.",
     setup: `
 data = [("Alice", 34, "NYC", "F"), ("Bob", 45, "LA", "M")]

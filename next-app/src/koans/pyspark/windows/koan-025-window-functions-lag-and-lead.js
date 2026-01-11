@@ -7,6 +7,7 @@ export default {
     id: 25,
     title: "Window Functions - Lag and Lead",
     category: "Window Functions",
+    difficulty: "advanced",
     description: "Access previous or next row values. Replace ___ with the correct code.",
     setup: `
 from pyspark.sql.window import Window

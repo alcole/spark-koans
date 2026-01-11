@@ -7,6 +7,7 @@ export default {
     id: 11,
     title: "Conditional Logic with when/otherwise",
     category: "Column Operations",
+    difficulty: "intermediate",
     description: "Create columns with conditional logic. Replace ___ with the correct code.",
     setup: `
 data = [("Alice", 34), ("Bob", 45), ("Charlie", 17), ("Diana", 65)]

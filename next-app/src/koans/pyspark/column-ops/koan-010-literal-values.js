@@ -7,6 +7,7 @@ export default {
     id: 10,
     title: "Literal Values",
     category: "Column Operations",
+    difficulty: "beginner",
     description: "Add a column with a constant value. Replace ___ with the correct code.",
     setup: `
 data = [("Alice", 34), ("Bob", 45)]

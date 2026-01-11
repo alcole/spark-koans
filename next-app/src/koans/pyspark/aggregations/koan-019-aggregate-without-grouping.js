@@ -7,6 +7,7 @@ export default {
     id: 19,
     title: "Aggregate Without Grouping",
     category: "Aggregations",
+    difficulty: "intermediate",
     description: "Calculate aggregates across the entire DataFrame. Replace ___ with the correct code.",
     setup: `
 data = [(100,), (200,), (300,), (400,), (500,)]

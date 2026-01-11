@@ -7,6 +7,7 @@ export default {
     id: 30,
     title: "Pivot Tables",
     category: "Advanced",
+    difficulty: "advanced",
     description: "Pivot data from rows to columns. Replace ___ with the correct code.",
     setup: `
 data = [
@@ -16,7 +17,7 @@ data = [
 df = spark.createDataFrame(data, ["name", "quarter", "sales"])
 `,
     template: `# Pivot to get quarters as columns
-from pyspark.sql.functions import sum as spark_sum
+from pyspark.sql.functions import sum as spark_sum, col
 
 result = df.groupBy("name").___(___).agg(spark_sum("sales"))
 

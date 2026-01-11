@@ -7,13 +7,14 @@ export default {
     id: 14,
     title: "String Functions - Concatenation",
     category: "String Functions",
+    difficulty: "beginner",
     description: "Concatenate strings together. Replace ___ with the correct code.",
     setup: `
 data = [("Alice", "Smith"), ("Bob", "Jones")]
 df = spark.createDataFrame(data, ["first", "last"])
 `,
     template: `# Concatenate first and last name with a space
-from pyspark.sql.functions import concat, concat_ws, lit
+from pyspark.sql.functions import concat, concat_ws, lit, col
 
 result = df.withColumn("full_name", ___(col("first"), lit(" "), col("last")))
 assert result.collect()[0]["full_name"] == "Alice Smith"
