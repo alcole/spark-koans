@@ -3,7 +3,7 @@
  * Category: Delta Lake
  */
 
-export default {
+const koan = {
     id: 104,
     title: "MERGE - Selective Update",
     category: "Delta Lake",
@@ -52,3 +52,5 @@ print("\\n🎉 Koan complete! You've learned selective MERGE updates.")`,
       "The target column to update is 'balance'"
     ]
   };
+
+export default koan;

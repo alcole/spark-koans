@@ -3,7 +3,7 @@
  * Category: Advanced
  */
 
-export default {
+const koan = {
     id: 28,
     title: "Union DataFrames",
     category: "Advanced",
@@ -29,3 +29,5 @@ print("\\n🎉 Koan complete! You've learned to union DataFrames.")`,
       "Both DataFrames must have the same schema"
     ]
   };
+
+export default koan;

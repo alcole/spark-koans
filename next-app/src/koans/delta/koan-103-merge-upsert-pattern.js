@@ -3,7 +3,7 @@
  * Category: Delta Lake
  */
 
-export default {
+const koan = {
     id: 103,
     title: "MERGE - Upsert Pattern",
     category: "Delta Lake",
@@ -55,3 +55,5 @@ print("\\n🎉 Koan complete! You've mastered the MERGE upsert pattern.")`,
       "Don't forget .execute() at the end"
     ]
   };
+
+export default koan;

@@ -4,7 +4,7 @@
  * Difficulty: Beginner
  */
 
-export default {
+const koan = {
   id: 101,
   title: "Creating a Delta Table",
   category: "Delta Lake",
@@ -47,3 +47,5 @@ assert DeltaTable.isDeltaTable(spark, "/data/employees")`,
   prerequisiteKoans: [1, 2, 3],
   nextKoans: [102],
 };
+
+export default koan;

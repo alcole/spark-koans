@@ -3,7 +3,7 @@
  * Category: Column Operations
  */
 
-export default {
+const koan = {
     id: 12,
     title: "Type Casting",
     category: "Column Operations",
@@ -33,3 +33,5 @@ print("\\n🎉 Koan complete! You've learned to cast types.")`,
       "Common types: 'integer', 'double', 'string', 'boolean', 'date'"
     ]
   };
+
+export default koan;

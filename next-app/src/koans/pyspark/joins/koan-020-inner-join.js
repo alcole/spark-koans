@@ -3,7 +3,7 @@
  * Category: Joins
  */
 
-export default {
+const koan = {
     id: 20,
     title: "Inner Join",
     category: "Joins",
@@ -46,3 +46,5 @@ print("\\n🎉 Koan complete! You've learned inner joins.")`,
       "The join type is already provided: 'inner'"
     ]
   };
+
+export default koan;

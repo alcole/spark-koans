@@ -4,7 +4,7 @@
  * Difficulty: Beginner
  */
 
-export default {
+const koan = {
   id: 1,
   title: "Creating a DataFrame",
   category: "Basics",
@@ -42,3 +42,5 @@ print("\\n🎉 Koan complete! You've learned to create a DataFrame.")`,
   prerequisiteKoans: [],
   nextKoans: [2],
 };
+
+export default koan;

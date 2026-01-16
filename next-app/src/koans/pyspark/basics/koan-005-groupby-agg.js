@@ -4,7 +4,7 @@
  * Difficulty: Beginner
  */
 
-export default {
+const koan = {
   id: 5,
   title: "Grouping and Aggregating",
   category: "Basics",
@@ -52,3 +52,5 @@ print("\\n🎉 Koan complete! You've learned to group and aggregate.")`,
   prerequisiteKoans: [1, 2, 3, 4],
   nextKoans: [101],
 };
+
+export default koan;

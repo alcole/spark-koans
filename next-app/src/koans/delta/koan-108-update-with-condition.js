@@ -3,7 +3,7 @@
  * Category: Delta Lake
  */
 
-export default {
+const koan = {
     id: 108,
     title: "Update with Condition",
     category: "Delta Lake",
@@ -44,3 +44,5 @@ print("\\n🎉 Koan complete! You've learned Delta update operations.")`,
       "The column to update is 'balance'"
     ]
   };
+
+export default koan;

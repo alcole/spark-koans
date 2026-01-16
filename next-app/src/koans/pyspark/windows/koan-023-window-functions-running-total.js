@@ -3,7 +3,7 @@
  * Category: Window Functions
  */
 
-export default {
+const koan = {
     id: 23,
     title: "Window Functions - Running Total",
     category: "Window Functions",
@@ -46,3 +46,5 @@ print("\\n🎉 Koan complete! You've learned window running totals.")`,
       "The .over() method applies the function to the window"
     ]
   };
+
+export default koan;

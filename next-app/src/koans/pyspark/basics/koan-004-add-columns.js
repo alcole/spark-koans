@@ -4,7 +4,7 @@
  * Difficulty: Beginner
  */
 
-export default {
+const koan = {
   id: 4,
   title: "Adding Columns",
   category: "Basics",
@@ -48,3 +48,5 @@ print("\\n🎉 Koan complete! You've learned to add columns.")`,
   prerequisiteKoans: [1, 2, 3],
   nextKoans: [5],
 };
+
+export default koan;

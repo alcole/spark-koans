@@ -3,7 +3,7 @@
  * Category: Delta Lake
  */
 
-export default {
+const koan = {
     id: 107,
     title: "Delete with Condition",
     category: "Delta Lake",
@@ -38,3 +38,5 @@ print("\\n🎉 Koan complete! You've learned Delta delete operations.")`,
       "The condition filters which rows to delete"
     ]
   };
+
+export default koan;

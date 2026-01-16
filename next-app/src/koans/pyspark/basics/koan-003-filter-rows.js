@@ -4,7 +4,7 @@
  * Difficulty: Beginner
  */
 
-export default {
+const koan = {
   id: 3,
   title: "Filtering Rows",
   category: "Basics",
@@ -45,3 +45,5 @@ print("\\n🎉 Koan complete! You've learned to filter rows.")`,
   prerequisiteKoans: [1, 2],
   nextKoans: [4],
 };
+
+export default koan;

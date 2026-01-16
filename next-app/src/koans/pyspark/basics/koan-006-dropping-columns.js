@@ -3,7 +3,7 @@
  * Category: Basics
  */
 
-export default {
+const koan = {
     id: 6,
     title: "Dropping Columns",
     category: "Basics",
@@ -31,3 +31,5 @@ print("\\n🎉 Koan complete! You've learned to drop columns.")`,
       "You can drop multiple columns by passing multiple arguments"
     ]
   };
+
+export default koan;

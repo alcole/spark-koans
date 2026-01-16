@@ -1,0 +1,31 @@
+{
+  "name": "PySpark Koans Dev Environment",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "eslint.workingDirectories": ["next-app"]
+      }
+    }
+  },
+
+  "postCreateCommand": "cd next-app && npm install",
+
+  "forwardPorts": [3000],
+
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+
+  "remoteUser": "node"
+}

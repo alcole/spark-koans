@@ -3,6 +3,7 @@
  */
 
 import Head from 'next/head';
+import Link from 'next/link';
 
 export default function ComingSoon() {
   return (
@@ -96,6 +97,17 @@ export default function ComingSoon() {
           <div className="mt-16 text-gray-500 text-sm">
             <p>Preparing an amazing learning experience for you</p>
           </div>
+
+          {/* Copyright Notice */}
+          <footer className="mt-8 py-6 border-t border-gray-800 text-center text-xs text-gray-500">
+            <p>© 2025-2026 Alex Cole. All Rights Reserved.</p>
+            <p className="mt-1">Spark Koans is an independent community tool.</p>
+            <p className="mt-2">
+              <Link href="/about" className="text-orange-500 hover:text-orange-400 transition-colors">
+                Learn More
+              </Link>
+            </p>
+          </footer>
         </div>
       </div>
     </>

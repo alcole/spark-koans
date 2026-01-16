@@ -3,7 +3,7 @@
  * Category: Aggregations
  */
 
-export default {
+const koan = {
     id: 18,
     title: "Multiple Aggregations",
     category: "Aggregations",
@@ -44,3 +44,5 @@ print("\\n🎉 Koan complete! You've learned multiple aggregations.")`,
       "count() counts the number of values"
     ]
   };
+
+export default koan;

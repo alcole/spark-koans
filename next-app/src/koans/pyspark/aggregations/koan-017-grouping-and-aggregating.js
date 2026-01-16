@@ -3,7 +3,7 @@
  * Category: Aggregations
  */
 
-export default {
+const koan = {
     id: 17,
     title: "Grouping and Aggregating",
     category: "Aggregations",
@@ -42,3 +42,5 @@ print("\\n🎉 Koan complete! You've learned to group and aggregate.")`,
       "The avg function takes a column name"
     ]
   };
+
+export default koan;

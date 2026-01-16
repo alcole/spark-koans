@@ -3,7 +3,7 @@
  * Category: Delta Lake
  */
 
-export default {
+const koan = {
     id: 109,
     title: "Create Table with Builder",
     category: "Delta Lake",
@@ -42,3 +42,5 @@ print("\\n🎉 Koan complete! You've learned the DeltaTable builder.")`,
       "Don't forget .execute() at the end"
     ]
   };
+
+export default koan;

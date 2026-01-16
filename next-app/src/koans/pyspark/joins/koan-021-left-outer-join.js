@@ -3,7 +3,7 @@
  * Category: Joins
  */
 
-export default {
+const koan = {
     id: 21,
     title: "Left Outer Join",
     category: "Joins",
@@ -39,3 +39,5 @@ print("\\n🎉 Koan complete! You've learned left outer joins.")`,
       "The join type can be 'left' or 'left_outer'"
     ]
   };
+
+export default koan;

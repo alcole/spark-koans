@@ -3,7 +3,7 @@
  * Category: Delta Lake
  */
 
-export default {
+const koan = {
     id: 106,
     title: "OPTIMIZE and Z-ORDER",
     category: "Delta Lake",
@@ -40,3 +40,5 @@ print("\\n🎉 Koan complete! You've learned table optimization.")`,
       "Z-ORDER improves query performance on filtered columns"
     ]
   };
+
+export default koan;

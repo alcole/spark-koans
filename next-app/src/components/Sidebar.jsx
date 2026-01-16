@@ -22,7 +22,7 @@ export default function Sidebar({ currentKoanId, progress, onKoanSelect }) {
   };
 
   return (
-    <div className="w-72 min-h-screen bg-gray-900 border-r border-gray-800 p-4 overflow-y-auto">
+    <div className="w-72 min-h-screen bg-gray-900 border-r border-gray-800 p-4 overflow-y-auto flex flex-col">
       <div className="mb-6">
         <Link href="/" className="block hover:opacity-80 transition-opacity">
           <h1 className="text-2xl font-bold text-orange-500 mb-1 cursor-pointer">PySpark Koans</h1>
@@ -100,6 +100,12 @@ export default function Sidebar({ currentKoanId, progress, onKoanSelect }) {
             </div>
           );
         })}
+      </div>
+
+      {/* Copyright Notice */}
+      <div className="mt-auto pt-4 border-t border-gray-800 text-sm text-gray-500 text-center">
+        <p>© 2025-2026 Alex Cole. All Rights Reserved.</p>
+        <p className="mt-1">Spark Koans is an independent community tool.</p>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
  * Category: Column Operations
  */
 
-export default {
+const koan = {
     id: 9,
     title: "Renaming Columns",
     category: "Column Operations",
@@ -34,3 +34,5 @@ print("\\n🎉 Koan complete! You've learned to rename columns.")`,
       "alias() is used within select() to rename on the fly"
     ]
   };
+
+export default koan;

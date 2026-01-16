@@ -3,7 +3,7 @@
  * Category: Basics
  */
 
-export default {
+const koan = {
     id: 7,
     title: "Distinct Values",
     category: "Basics",
@@ -30,3 +30,5 @@ print("\\n🎉 Koan complete! You've learned to get distinct values.")`,
       "You can chain select() with distinct() to get unique values of specific columns"
     ]
   };
+
+export default koan;

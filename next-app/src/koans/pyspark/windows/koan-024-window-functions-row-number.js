@@ -3,7 +3,7 @@
  * Category: Window Functions
  */
 
-export default {
+const koan = {
     id: 24,
     title: "Window Functions - Row Number",
     category: "Window Functions",
@@ -43,3 +43,5 @@ print("\\n🎉 Koan complete! You've learned row_number().")`,
       "Use .over() to apply to the window specification"
     ]
   };
+
+export default koan;

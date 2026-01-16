@@ -3,7 +3,7 @@
  * Category: Column Operations
  */
 
-export default {
+const koan = {
     id: 10,
     title: "Literal Values",
     category: "Column Operations",
@@ -33,3 +33,5 @@ print("\\n🎉 Koan complete! You've learned to use literal values.")`,
       "It can be used with strings, numbers, or other values"
     ]
   };
+
+export default koan;

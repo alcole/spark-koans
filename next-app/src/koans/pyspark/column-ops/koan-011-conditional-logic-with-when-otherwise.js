@@ -3,7 +3,7 @@
  * Category: Column Operations
  */
 
-export default {
+const koan = {
     id: 11,
     title: "Conditional Logic with when/otherwise",
     category: "Column Operations",
@@ -42,3 +42,5 @@ print("\\n🎉 Koan complete! You've learned conditional column logic.")`,
       "End with .otherwise() for the default case"
     ]
   };
+
+export default koan;

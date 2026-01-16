@@ -3,7 +3,7 @@
  * Category: Null Handling
  */
 
-export default {
+const koan = {
     id: 26,
     title: "Handling Nulls - Detection",
     category: "Null Handling",
@@ -38,3 +38,5 @@ print("\\n🎉 Koan complete! You've learned null detection.")`,
       "These are methods on Column objects"
     ]
   };
+
+export default koan;
