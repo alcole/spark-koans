@@ -3,7 +3,7 @@
  * Category: String Functions
  */
 
-export default {
+const koan = {
     id: 15,
     title: "String Functions - Substring and Length",
     category: "String Functions",
@@ -34,3 +34,5 @@ print("\\n🎉 Koan complete! You've learned substring and length.")`,
       "Note: substring is 1-indexed, not 0-indexed!"
     ]
   };
+
+export default koan;

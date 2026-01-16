@@ -3,7 +3,7 @@
  * Category: Null Handling
  */
 
-export default {
+const koan = {
     id: 27,
     title: "Handling Nulls - Fill and Drop",
     category: "Null Handling",
@@ -39,3 +39,5 @@ print("\\n🎉 Koan complete! You've learned to handle nulls.")`,
       "dropna() removes rows with null values"
     ]
   };
+
+export default koan;

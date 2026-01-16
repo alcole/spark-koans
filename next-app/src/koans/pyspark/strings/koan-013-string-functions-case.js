@@ -3,7 +3,7 @@
  * Category: String Functions
  */
 
-export default {
+const koan = {
     id: 13,
     title: "String Functions - Case",
     category: "String Functions",
@@ -37,3 +37,5 @@ print("\\n🎉 Koan complete! You've learned string case functions.")`,
       "initcap() capitalizes the first letter of each word"
     ]
   };
+
+export default koan;

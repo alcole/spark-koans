@@ -3,7 +3,7 @@
  * Category: String Functions
  */
 
-export default {
+const koan = {
     id: 16,
     title: "String Functions - Trim and Pad",
     category: "String Functions",
@@ -34,3 +34,5 @@ print("\\n🎉 Koan complete! You've learned trim and pad functions.")`,
       "rpad() pads on the right"
     ]
   };
+
+export default koan;

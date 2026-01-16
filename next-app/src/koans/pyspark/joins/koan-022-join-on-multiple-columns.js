@@ -3,7 +3,7 @@
  * Category: Joins
  */
 
-export default {
+const koan = {
     id: 22,
     title: "Join on Multiple Columns",
     category: "Joins",
@@ -39,3 +39,5 @@ print("\\n🎉 Koan complete! You've learned multi-column joins.")`,
       "The columns must match in both DataFrames"
     ]
   };
+
+export default koan;

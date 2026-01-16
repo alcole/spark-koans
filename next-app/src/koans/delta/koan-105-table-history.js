@@ -3,7 +3,7 @@
  * Category: Delta Lake
  */
 
-export default {
+const koan = {
     id: 105,
     title: "Table History",
     category: "Delta Lake",
@@ -48,3 +48,5 @@ print("\\n🎉 Koan complete! You can now audit Delta table changes.")`,
       "It returns a DataFrame with version info"
     ]
   };
+
+export default koan;

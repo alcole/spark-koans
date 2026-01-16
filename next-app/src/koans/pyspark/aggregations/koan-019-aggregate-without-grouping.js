@@ -3,7 +3,7 @@
  * Category: Aggregations
  */
 
-export default {
+const koan = {
     id: 19,
     title: "Aggregate Without Grouping",
     category: "Aggregations",
@@ -41,3 +41,5 @@ print("\\n🎉 Koan complete! You've learned global aggregations.")`,
       "avg() calculates the average"
     ]
   };
+
+export default koan;

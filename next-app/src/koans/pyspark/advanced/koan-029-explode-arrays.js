@@ -3,7 +3,7 @@
  * Category: Advanced
  */
 
-export default {
+const koan = {
     id: 29,
     title: "Explode Arrays",
     category: "Advanced",
@@ -37,3 +37,5 @@ print("\\n🎉 Koan complete! You've learned to explode arrays.")`,
       "The original row is duplicated for each array element"
     ]
   };
+
+export default koan;

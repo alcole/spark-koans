@@ -4,7 +4,7 @@
  * Difficulty: Beginner
  */
 
-export default {
+const koan = {
   id: 2,
   title: "Selecting Columns",
   category: "Basics",
@@ -41,3 +41,5 @@ print("\\n🎉 Koan complete! You've learned to select columns.")`,
   prerequisiteKoans: [1],
   nextKoans: [3],
 };
+
+export default koan;

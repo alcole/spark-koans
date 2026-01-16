@@ -3,7 +3,7 @@
  * Category: Advanced
  */
 
-export default {
+const koan = {
     id: 30,
     title: "Pivot Tables",
     category: "Advanced",
@@ -37,3 +37,5 @@ print("\\n🎉 Koan complete! You've learned pivot tables.")`,
       "Specify which column's values become new column names"
     ]
   };
+
+export default koan;

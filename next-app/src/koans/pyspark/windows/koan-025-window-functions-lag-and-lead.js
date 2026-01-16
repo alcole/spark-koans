@@ -3,7 +3,7 @@
  * Category: Window Functions
  */
 
-export default {
+const koan = {
     id: 25,
     title: "Window Functions - Lag and Lead",
     category: "Window Functions",
@@ -51,3 +51,5 @@ print("\\n🎉 Koan complete! You've learned lag and lead.")`,
       "The second argument is how many rows to look back/forward"
     ]
   };
+
+export default koan;

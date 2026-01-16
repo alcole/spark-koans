@@ -3,7 +3,7 @@
  * Category: String Functions
  */
 
-export default {
+const koan = {
     id: 14,
     title: "String Functions - Concatenation",
     category: "String Functions",
@@ -32,3 +32,5 @@ print("\\n🎉 Koan complete! You've learned string concatenation.")`,
       "Use lit() for literal strings in concat()"
     ]
   };
+
+export default koan;

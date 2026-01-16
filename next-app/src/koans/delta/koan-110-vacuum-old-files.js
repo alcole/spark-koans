@@ -3,7 +3,7 @@
  * Category: Delta Lake
  */
 
-export default {
+const koan = {
     id: 110,
     title: "VACUUM Old Files",
     category: "Delta Lake",
@@ -44,3 +44,5 @@ print("\\n🎉 Koan complete! You understand VACUUM and retention.")`,
       "Be careful: this breaks time travel to old versions!"
     ]
   };
+
+export default koan;

@@ -3,7 +3,7 @@
  * Category: Delta Lake
  */
 
-export default {
+const koan = {
     id: 102,
     title: "Time Travel - Version",
     category: "Delta Lake",
@@ -45,3 +45,5 @@ print("\\n🎉 Koan complete! You've mastered time travel queries.")`,
       "Version numbers start at 0"
     ]
   };
+
+export default koan;
