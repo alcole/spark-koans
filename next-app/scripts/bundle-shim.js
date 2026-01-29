@@ -22,11 +22,16 @@ const windowShim = fs.readFileSync(
   'utf8'
 );
 
+const ioShim = fs.readFileSync(
+  path.join(__dirname, '../src/shims/pyspark/io.py'),
+  'utf8'
+);
+
 // Remove module docstrings and imports that won't work in single file
 const cleanCore = coreShim
   .replace(/"""[\s\S]*?"""\n\n/, '') // Remove module docstring
   .replace(/^import pandas as pd\n/m, '') // Will add at top
-  .replace(/^from typing import.*\n/gm, ''); // Remove typing imports
+  .replace(/^from typing import.*\n/gm, ''); // Will add at top
 
 const cleanFunctions = functionsShim
   .replace(/"""[\s\S]*?"""\n\n/, '')
@@ -34,8 +39,15 @@ const cleanFunctions = functionsShim
   .replace(/^from \.core import Column\n/m, ''); // Remove relative import
 
 const cleanWindow = windowShim
-  .replace(/"""[\s\S]*?"""\n/g, '')
-  .replace(/^from \.core import Column\n/m, ''); // Remove relative import
+  .replace(/"""[\s\S]*?"""\n\n/, '')
+  .replace(/^from \.core import Column\n/m, '')
+  .replace(/^\n+/gm, '\n'); // Remove extra blank lines
+
+const cleanIO = ioShim
+  .replace(/"""[\s\S]*?"""\n\n/, '')
+  .replace(/^import pandas as pd\n/m, '')
+  .replace(/^from \.core import.*\n/gm, '')
+  .replace(/^from \.catalog import.*\n/gm, '');
 
 // Bundle everything together
 const bundledShim = `# PySpark Shim - Complete bundled version
@@ -43,6 +55,7 @@ const bundledShim = `# PySpark Shim - Complete bundled version
 import pandas as pd
 import sys
 from types import ModuleType
+from typing import List, Any, Optional, Union
 
 # ============ CORE CLASSES ============
 ${cleanCore}
@@ -52,6 +65,9 @@ ${cleanFunctions}
 
 # ============ WINDOW FUNCTIONS ============
 ${cleanWindow}
+
+# ============ I/O CLASSES ============
+${cleanIO}
 
 # ============ MODULE SETUP ============
 # Create proper module structure for imports
@@ -66,6 +82,8 @@ pyspark_sql_module.Column = Column
 pyspark_sql_module.DataFrame = DataFrame
 pyspark_sql_module.SparkSession = SparkSession
 pyspark_sql_module.GroupedData = GroupedData
+pyspark_sql_module.DataFrameWriter = DataFrameWriter
+pyspark_sql_module.DataFrameReader = DataFrameReader
 
 # Add all functions to pyspark.sql.functions
 pyspark_sql_functions_module.col = col

@@ -362,6 +362,9 @@ class SparkSession:
         pdf = pd.DataFrame(data, columns=schema)
         return DataFrame(pdf)
 
+    # NOTE: sql() and table() methods are added by unity-catalog-shim.py
+    # when it's loaded. This avoids import errors when Unity Catalog is not loaded.
+
 
 # Create global spark session
 spark = SparkSession()
