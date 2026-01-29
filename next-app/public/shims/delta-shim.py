@@ -350,8 +350,24 @@ class DeltaTableBuilder:
         return DeltaTable(self._path)
 
 
-# Add createIfNotExists to DeltaTable class
+# Add createIfNotExists and create to DeltaTable class
 DeltaTable.createIfNotExists = staticmethod(lambda spark: DeltaTableBuilder(spark))
+DeltaTable.create = staticmethod(lambda spark: DeltaTableBuilder(spark))
+
+
+# ============ MODULE SETUP ============
+# Create proper module structure for imports like: from delta.tables import DeltaTable
+import sys
+from types import ModuleType
+
+delta_module = ModuleType('delta')
+delta_tables_module = ModuleType('delta.tables')
+
+delta_tables_module.DeltaTable = DeltaTable
+delta_module.tables = delta_tables_module
+
+sys.modules['delta'] = delta_module
+sys.modules['delta.tables'] = delta_tables_module
 
 
 # ============ MONKEY-PATCH PYSPARK SHIM ============
