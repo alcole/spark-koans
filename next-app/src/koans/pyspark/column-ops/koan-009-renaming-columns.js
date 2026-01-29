@@ -7,6 +7,7 @@ const koan = {
     id: 9,
     title: "Renaming Columns",
     category: "Column Operations",
+    difficulty: "beginner",
     description: "Rename columns in a DataFrame. Replace ___ with the correct code.",
     setup: `
 data = [("Alice", 34), ("Bob", 45)]

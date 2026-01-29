@@ -7,6 +7,7 @@ const koan = {
     id: 7,
     title: "Distinct Values",
     category: "Basics",
+    difficulty: "beginner",
     description: "Remove duplicate rows from a DataFrame. Replace ___ with the correct code.",
     setup: `
 data = [("Alice", "NYC"), ("Bob", "LA"), ("Alice", "NYC"), ("Charlie", "NYC")]

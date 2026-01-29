@@ -7,6 +7,7 @@ const koan = {
     id: 102,
     title: "Time Travel - Version",
     category: "Delta Lake",
+    difficulty: "intermediate",
     description: "Query a previous version of a Delta table. Replace ___ with the correct code.",
     setup: `
 _reset_delta_tables()
