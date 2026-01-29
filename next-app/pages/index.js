@@ -1,16 +1,16 @@
 /**
- * Coming Soon Landing Page for spark-koans.com
+ * Landing Page for spark-koans.com
  */
 
 import Head from 'next/head';
 import Link from 'next/link';
 
-export default function ComingSoon() {
+export default function Home() {
   return (
     <>
       <Head>
-        <title>PySpark Koans - Coming Soon</title>
-        <meta name="description" content="Master PySpark and Delta Lake through interactive exercises. Coming soon to spark-koans.com" />
+        <title>PySpark Koans - Master PySpark Through Practice</title>
+        <meta name="description" content="Master PySpark and Delta Lake through interactive exercises. Learn by doing with hands-on koans." />
       </Head>
 
       <style jsx>{`
@@ -67,18 +67,26 @@ export default function ComingSoon() {
             Complete koans, earn achievement badges, and become a data engineering expert.
           </p>
 
-          {/* Coming Soon Badge */}
-          <div className="inline-block bg-orange-600 text-white px-8 py-4 rounded-lg text-xl font-semibold mb-8 animate-fadeIn delay-800">
-            Coming Soon
+          {/* Start Learning Button */}
+          <div className="mb-8 animate-fadeIn delay-800">
+            <Link href="/koans/1" className="inline-block bg-orange-600 hover:bg-orange-500 text-white px-8 py-4 rounded-lg text-xl font-semibold transition-colors">
+              Start Learning
+            </Link>
           </div>
 
-          {/* Documentation Link */}
-          <div className="mb-12 animate-fadeIn delay-800">
+          {/* Secondary Links */}
+          <div className="flex justify-center gap-4 mb-12 animate-fadeIn delay-800">
             <Link href="/docs" className="inline-flex items-center px-6 py-3 border border-gray-700 text-base font-medium rounded-lg text-gray-300 bg-gray-900 hover:bg-gray-800 hover:border-orange-500 transition-colors">
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
-              Documentation Links
+              Documentation
+            </Link>
+            <Link href="/about" className="inline-flex items-center px-6 py-3 border border-gray-700 text-base font-medium rounded-lg text-gray-300 bg-gray-900 hover:bg-gray-800 hover:border-orange-500 transition-colors">
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              About
             </Link>
           </div>
 
@@ -105,18 +113,13 @@ export default function ComingSoon() {
 
           {/* Footer */}
           <div className="mt-16 text-gray-500 text-sm">
-            <p>Preparing an amazing learning experience for you</p>
+            <p>40 interactive exercises covering PySpark and Delta Lake</p>
           </div>
 
           {/* Copyright Notice */}
           <footer className="mt-8 py-6 border-t border-gray-800 text-center text-xs text-gray-500">
             <p>© 2025-2026 Alex Cole. All Rights Reserved.</p>
-            <p className="mt-1">Spark Koans is an independent community tool.</p>
-            <p className="mt-2">
-              <Link href="/about" className="text-orange-500 hover:text-orange-400 transition-colors">
-                Learn More
-              </Link>
-            </p>
+            <p className="mt-1">Spark Koans is an independent community learning tool.</p>
           </footer>
         </div>
       </div>
