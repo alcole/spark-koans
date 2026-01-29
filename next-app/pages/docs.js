@@ -8,6 +8,11 @@ import Head from 'next/head';
 export default function DocsPage() {
   const docLinks = [
     {
+      title: "PySpark Getting Started Guide",
+      url: "https://spark.apache.org/docs/latest/api/python/getting_started/index.html",
+      description: "Official getting started guide for PySpark with examples and tutorials"
+    },
+    {
       title: "PySpark SQL Reference",
       url: "https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/index.html",
       description: "Complete API reference for PySpark SQL module including DataFrame, Column, and functions"
@@ -16,11 +21,6 @@ export default function DocsPage() {
       title: "PySpark API Documentation",
       url: "https://spark.apache.org/docs/latest/api/python/index.html",
       description: "Full PySpark Python API documentation covering all modules"
-    },
-    {
-      title: "PySpark Getting Started Guide",
-      url: "https://spark.apache.org/docs/latest/api/python/getting_started/index.html",
-      description: "Official getting started guide for PySpark with examples and tutorials"
     },
     {
       title: "Delta Lake Python API",
@@ -85,10 +85,10 @@ export default function DocsPage() {
           <div className="mt-12 bg-gray-900 border border-gray-800 rounded-lg p-6">
             <h2 className="text-2xl font-semibold text-orange-400 mb-4">Additional Resources</h2>
             <ul className="space-y-2 text-gray-400">
-              <li>• <strong className="text-gray-300">Spark SQL Guide:</strong> Learn about Spark SQL concepts and syntax</li>
-              <li>• <strong className="text-gray-300">DataFrame API:</strong> Comprehensive guide to DataFrame operations</li>
-              <li>• <strong className="text-gray-300">Delta Lake Documentation:</strong> Complete guide to Delta Lake features</li>
-              <li>• <strong className="text-gray-300">Performance Tuning:</strong> Best practices for optimizing Spark applications</li>
+              <li>• <a href="https://spark.apache.org/docs/latest/sql-programming-guide.html" target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:text-orange-300 underline">Spark SQL Guide</a> - Learn about Spark SQL concepts and syntax</li>
+              <li>• <a href="https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/dataframe.html" target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:text-orange-300 underline">DataFrame API</a> - Comprehensive guide to DataFrame operations</li>
+              <li>• <a href="https://docs.delta.io/latest/index.html" target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:text-orange-300 underline">Delta Lake Documentation</a> - Complete guide to Delta Lake features</li>
+              <li>• <a href="https://spark.apache.org/docs/latest/sql-performance-tuning.html" target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:text-orange-300 underline">Performance Tuning</a> - Best practices for optimizing Spark applications</li>
             </ul>
           </div>
         </div>
