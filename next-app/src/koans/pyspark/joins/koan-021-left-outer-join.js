@@ -20,7 +20,9 @@ departments = spark.createDataFrame([
     (102, "Sales")
 ], ["dept_id", "dept_name"])
 `,
-    template: `# Left join to keep all employees, even without matching dept
+    template: `from pyspark.sql.functions import col
+
+# Left join to keep all employees, even without matching dept
 result = employees.join(departments, "dept_id", "___")
 
 # Should have 3 rows (all employees kept)

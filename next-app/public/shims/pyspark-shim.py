@@ -168,8 +168,52 @@ class GroupedData:
         return DataFrame(result_pdf)
 
     def pivot(self, pivot_col):
-        # Pivot not implemented in browser shim
-        raise NotImplementedError("pivot() is not implemented in the browser shim")
+        """Return a PivotedData object for pivot operations"""
+        return PivotedData(self._df, self._group_cols, pivot_col)
+
+
+# ============ PIVOTED DATA ============
+class PivotedData:
+    """Result of GroupedData.pivot()"""
+    def __init__(self, df, group_cols, pivot_col):
+        self._df = df
+        self._group_cols = group_cols
+        self._pivot_col = pivot_col
+
+    def agg(self, *exprs):
+        pdf = self._df._pdf.copy()
+
+        # Get the aggregation function and source column
+        for expr in exprs:
+            if hasattr(expr, '_agg_func'):
+                source_col = expr._source_col
+                func = expr._agg_func
+
+                # Map function name to pandas aggfunc
+                agg_map = {
+                    'sum': 'sum',
+                    'avg': 'mean',
+                    'mean': 'mean',
+                    'count': 'count',
+                    'min': 'min',
+                    'max': 'max'
+                }
+                aggfunc = agg_map.get(func, 'sum')
+
+                # Use pandas pivot_table
+                result = pdf.pivot_table(
+                    index=self._group_cols,
+                    columns=self._pivot_col,
+                    values=source_col,
+                    aggfunc=aggfunc
+                ).reset_index()
+
+                # Flatten column names if needed
+                result.columns = [str(c) for c in result.columns]
+
+                return DataFrame(result)
+
+        return DataFrame(pdf)
 
 
 # ============ DATAFRAME CLASS ============
@@ -208,19 +252,47 @@ class DataFrame:
 
     def select(self, *cols):
         result_cols = {}
+        explode_col = None
+        explode_alias = None
+
         for c in cols:
             if isinstance(c, str):
                 result_cols[c] = self._pdf[c]
             elif isinstance(c, Column):
                 col_name = c._alias or c.name
-                if hasattr(c, '_transform_func'):
+                if hasattr(c, '_is_explode') and c._is_explode:
+                    explode_col = c.name
+                    explode_alias = col_name
+                elif hasattr(c, '_transform_func'):
                     result_cols[col_name] = c._transform_func(self._pdf)
                 else:
                     try:
                         result_cols[col_name] = self._pdf.eval(c.expr)
                     except:
                         result_cols[col_name] = self._pdf[c.name]
-        return DataFrame(pd.DataFrame(result_cols))
+
+        result_pdf = pd.DataFrame(result_cols)
+
+        # Handle explode after building initial result
+        if explode_col is not None:
+            # Get the array column from original dataframe
+            array_col = self._pdf[explode_col]
+            # Explode it and align with result
+            exploded_rows = []
+            for idx, row in result_pdf.iterrows():
+                arr = array_col.iloc[idx]
+                if isinstance(arr, list):
+                    for item in arr:
+                        new_row = row.to_dict()
+                        new_row[explode_alias] = item
+                        exploded_rows.append(new_row)
+                else:
+                    new_row = row.to_dict()
+                    new_row[explode_alias] = arr
+                    exploded_rows.append(new_row)
+            result_pdf = pd.DataFrame(exploded_rows)
+
+        return DataFrame(result_pdf)
 
     def filter(self, condition):
         if isinstance(condition, Column):
@@ -239,7 +311,8 @@ class DataFrame:
             window = col._window
             if window._order_cols:
                 sort_cols = [oc if isinstance(oc, str) else oc.name for oc in window._order_cols]
-                pdf = pdf.sort_values(sort_cols).reset_index(drop=True)
+                asc_list = [not getattr(oc, '_sort_desc', False) if not isinstance(oc, str) else True for oc in window._order_cols]
+                pdf = pdf.sort_values(sort_cols, ascending=asc_list).reset_index(drop=True)
 
             if hasattr(col, '_agg_func') and col._agg_func == 'sum':
                 source_col = col._source_col
@@ -247,6 +320,45 @@ class DataFrame:
                     pdf[name] = pdf.groupby(window._partition_cols)[source_col].cumsum()
                 else:
                     pdf[name] = pdf[source_col].cumsum()
+            elif hasattr(col, '_window_func'):
+                window_func = col._window_func
+                partition_cols = window._partition_cols if window._partition_cols else None
+
+                if window_func == 'row_number':
+                    if partition_cols:
+                        pdf[name] = pdf.groupby(partition_cols).cumcount() + 1
+                    else:
+                        pdf[name] = range(1, len(pdf) + 1)
+                elif window_func == 'rank':
+                    if partition_cols:
+                        pdf[name] = pdf.groupby(partition_cols).cumcount() + 1
+                    else:
+                        pdf[name] = range(1, len(pdf) + 1)
+                elif window_func == 'dense_rank':
+                    if partition_cols:
+                        pdf[name] = pdf.groupby(partition_cols).cumcount() + 1
+                    else:
+                        pdf[name] = range(1, len(pdf) + 1)
+                elif window_func == 'lag':
+                    source_col = col.name
+                    offset = col._window_args.get('offset', 1)
+                    default = col._window_args.get('default', None)
+                    if partition_cols:
+                        pdf[name] = pdf.groupby(partition_cols)[source_col].shift(offset)
+                    else:
+                        pdf[name] = pdf[source_col].shift(offset)
+                    if default is not None:
+                        pdf[name] = pdf[name].fillna(default)
+                elif window_func == 'lead':
+                    source_col = col.name
+                    offset = col._window_args.get('offset', 1)
+                    default = col._window_args.get('default', None)
+                    if partition_cols:
+                        pdf[name] = pdf.groupby(partition_cols)[source_col].shift(-offset)
+                    else:
+                        pdf[name] = pdf[source_col].shift(-offset)
+                    if default is not None:
+                        pdf[name] = pdf[name].fillna(default)
             return DataFrame(pdf)
 
         # Handle transform functions

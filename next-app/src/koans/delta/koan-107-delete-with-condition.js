@@ -15,7 +15,9 @@ data = [("Alice", 100, True), ("Bob", 200, False), ("Charlie", 150, True)]
 df = spark.createDataFrame(data, ["name", "balance", "is_active"])
 df.write.format("delta").save("/data/accounts")
 `,
-    template: `# Get the Delta table
+    template: `from delta.tables import DeltaTable
+
+# Get the Delta table
 dt = DeltaTable.forPath(spark, "/data/accounts")
 
 # Delete all inactive accounts

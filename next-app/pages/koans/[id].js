@@ -28,7 +28,7 @@ export default function KoanPage({ koan }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
 
-  const { pyodide, isLoading, error: pyodideError } = usePyodide();
+  const { pyodide, isLoading, error: pyodideError, loadDeltaShim, shimsLoaded } = usePyodide();
   const { markComplete, isComplete, progress } = useKoanProgress();
   const stats = getKoanStats();
 
@@ -63,6 +63,11 @@ export default function KoanPage({ koan }) {
     setError(null);
 
     try {
+      // Load Delta shim for Delta Lake koans
+      if (koan.category === 'Delta Lake' && !shimsLoaded.delta) {
+        await loadDeltaShim();
+      }
+
       // Run setup code
       await pyodide.runPythonAsync(koan.setup);
 
@@ -227,9 +232,9 @@ _stdout_capture.getvalue()
                 )}
 
                 {showSolution && (
-                  <div className="bg-green-900/20 border border-green-800/50 rounded-lg p-4">
+                  <div className="bg-green-900/20 border border-green-800/50 rounded-lg p-4 overflow-hidden">
                     <h3 className="text-sm font-medium text-green-500 mb-2">Solution</h3>
-                    <pre className="text-sm text-green-200/80 font-mono whitespace-pre-wrap">
+                    <pre className="text-sm text-green-200/80 font-mono whitespace-pre-wrap break-all overflow-x-auto">
                       {koan.solution}
                     </pre>
                   </div>

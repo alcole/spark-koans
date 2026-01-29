@@ -21,7 +21,9 @@ departments = spark.createDataFrame([
     (103, "Marketing")
 ], ["dept_id", "dept_name"])
 `,
-    template: `# Join employees with departments on dept_id
+    template: `from pyspark.sql.functions import col
+
+# Join employees with departments on dept_id
 result = employees.___(departments, ___, "inner")
 
 # Should have 3 rows (all employees have matching departments)

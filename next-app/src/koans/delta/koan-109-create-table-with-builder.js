@@ -11,7 +11,9 @@ const koan = {
     setup: `
 _reset_delta_tables()
 `,
-    template: `# Create a Delta table with explicit schema
+    template: `from delta.tables import DeltaTable
+
+# Create a Delta table with explicit schema
 DeltaTable._____(spark) \\
     .tableName("products") \\
     .addColumn("id", "INT") \\

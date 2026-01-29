@@ -16,7 +16,9 @@ data = [(i, f"user_{i}", i % 10) for i in range(100)]
 df = spark.createDataFrame(data, ["id", "name", "category"])
 df.write.format("delta").save("/data/users")
 `,
-    template: `# Get the Delta table
+    template: `from delta.tables import DeltaTable
+
+# Get the Delta table
 dt = DeltaTable.forPath(spark, "/data/users")
 
 # Optimize the table (compacts small files)

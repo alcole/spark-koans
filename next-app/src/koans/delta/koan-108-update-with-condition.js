@@ -15,7 +15,10 @@ data = [("Alice", 100, "basic"), ("Bob", 200, "premium"), ("Charlie", 50, "basic
 df = spark.createDataFrame(data, ["name", "balance", "tier"])
 df.write.format("delta").save("/data/accounts")
 `,
-    template: `# Get the Delta table
+    template: `from delta.tables import DeltaTable
+from pyspark.sql.functions import col
+
+# Get the Delta table
 dt = DeltaTable.forPath(spark, "/data/accounts")
 
 # Give all premium users a bonus: set their balance to balance + 100

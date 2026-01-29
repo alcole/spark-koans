@@ -20,7 +20,10 @@ target_df.write.format("delta").save("/data/accounts")
 source_data = [("Alice", 500)]
 source_df = spark.createDataFrame(source_data, ["name", "new_balance"])
 `,
-    template: `# Get the Delta table
+    template: `from delta.tables import DeltaTable
+from pyspark.sql.functions import col
+
+# Get the Delta table
 dt = DeltaTable.forPath(spark, "/data/accounts")
 
 # Merge with specific column mapping
