@@ -19,7 +19,7 @@ data = [
 df = spark.createDataFrame(data, ["department", "name", "salary"])
 `,
     template: `# Group by department and calculate average salary
-from pyspark.sql.functions import avg, round
+from pyspark.sql.functions import avg, round, col
 
 result = df.___("department").agg(
     round(___("salary"), 2).alias("avg_salary")

@@ -20,7 +20,9 @@ targets = spark.createDataFrame([
     ("2024", "Q2", 140)
 ], ["year", "quarter", "target"])
 `,
-    template: `# Join on both year and quarter
+    template: `from pyspark.sql.functions import col
+
+# Join on both year and quarter
 result = orders.join(targets, [___, ___], "inner")
 
 # Should have 3 rows

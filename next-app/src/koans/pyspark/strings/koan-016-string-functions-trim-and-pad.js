@@ -13,7 +13,7 @@ data = [("  Alice  ",), ("Bob",), (" Charlie ",)]
 df = spark.createDataFrame(data, ["name"])
 `,
     template: `# Trim whitespace from both sides
-from pyspark.sql.functions import trim, ltrim, rtrim, lpad, rpad
+from pyspark.sql.functions import trim, ltrim, rtrim, lpad, rpad, col
 
 result = df.withColumn("trimmed", ___(col("name")))
 trimmed = [row["trimmed"] for row in result.collect()]

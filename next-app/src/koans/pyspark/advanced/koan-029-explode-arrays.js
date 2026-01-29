@@ -9,7 +9,7 @@ const koan = {
     category: "Advanced",
     description: "Expand array columns into multiple rows. Replace ___ with the correct code.",
     setup: `
-from pyspark.sql.functions import explode, split
+from pyspark.sql.functions import explode, split, col
 
 data = [("Alice", "python,sql,spark"), ("Bob", "java,scala")]
 df = spark.createDataFrame(data, ["name", "skills_str"])
@@ -18,7 +18,7 @@ df = spark.createDataFrame(data, ["name", "skills_str"])
 df = df.withColumn("skills", split(col("skills_str"), ","))
 `,
     template: `# Explode the skills array into separate rows
-from pyspark.sql.functions import explode
+from pyspark.sql.functions import explode, col
 
 result = df.select("name", ___(col("skills")).alias("skill"))
 

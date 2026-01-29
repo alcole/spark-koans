@@ -13,7 +13,7 @@ data = [("alice smith",), ("BOB JONES",), ("Charlie Brown",)]
 df = spark.createDataFrame(data, ["name"])
 `,
     template: `# Convert to uppercase
-from pyspark.sql.functions import upper, lower, initcap
+from pyspark.sql.functions import upper, lower, initcap, col
 
 result = df.withColumn("upper_name", ___(col("name")))
 assert result.collect()[0]["upper_name"] == "ALICE SMITH"

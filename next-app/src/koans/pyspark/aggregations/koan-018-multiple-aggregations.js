@@ -16,7 +16,7 @@ data = [
 df = spark.createDataFrame(data, ["department", "salary"])
 `,
     template: `# Calculate min, max, avg, and count per department
-from pyspark.sql.functions import min, max, avg, count
+from pyspark.sql.functions import min, max, avg, count, col
 
 result = df.groupBy("department").agg(
     ___("salary").alias("min_salary"),

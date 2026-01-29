@@ -16,7 +16,7 @@ data = [
 df = spark.createDataFrame(data, ["name", "quarter", "sales"])
 `,
     template: `# Pivot to get quarters as columns
-from pyspark.sql.functions import sum as spark_sum
+from pyspark.sql.functions import sum as spark_sum, col
 
 result = df.groupBy("name").___(___).agg(spark_sum("sales"))
 
