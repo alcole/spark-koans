@@ -49,36 +49,23 @@ export default function About() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-white mb-3">Learning Paths</h2>
+              <h2 className="text-2xl font-semibold text-white mb-3">What&apos;s Covered</h2>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-                  <h3 className="text-xl font-semibold text-orange-400 mb-2">PySpark Fundamentals</h3>
+                  <h3 className="text-xl font-semibold text-orange-400 mb-2">PySpark</h3>
                   <p className="text-gray-400">
-                    Learn DataFrame basics, column operations, string functions, aggregations, joins,
+                    DataFrame basics, column operations, string functions, aggregations, joins,
                     window functions, null handling, and advanced operations.
                   </p>
                 </div>
                 <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
                   <h3 className="text-xl font-semibold text-orange-400 mb-2">Delta Lake</h3>
                   <p className="text-gray-400">
-                    Master Delta Lake features including time travel, merge operations, optimization,
+                    Delta Lake features including time travel, merge operations, optimization,
                     and transaction history.
                   </p>
                 </div>
               </div>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold text-white mb-3">Exam Preparation</h2>
-              <p className="text-lg leading-relaxed">
-                Koans are tagged for Databricks certification relevance, helping you prepare for:
-              </p>
-              <ul className="list-disc list-inside space-y-2 text-gray-400 ml-4 mt-3">
-                <li>Data Engineer Associate (DEA)</li>
-                <li>Data Engineer Professional (DEP)</li>
-                <li>Data Analyst Associate (DAA)</li>
-                <li>Machine Learning Associate (MLA)</li>
-              </ul>
             </section>
           </div>
 
