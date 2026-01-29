@@ -28,7 +28,7 @@ export default function KoanPage({ koan }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
 
-  const { pyodide, isLoading, error: pyodideError } = usePyodide();
+  const { pyodide, isLoading, error: pyodideError, loadDeltaShim, shimsLoaded } = usePyodide();
   const { markComplete, isComplete, progress } = useKoanProgress();
   const stats = getKoanStats();
 
@@ -63,6 +63,11 @@ export default function KoanPage({ koan }) {
     setError(null);
 
     try {
+      // Load Delta shim for Delta Lake koans
+      if (koan.category === 'Delta Lake' && !shimsLoaded.delta) {
+        await loadDeltaShim();
+      }
+
       // Run setup code
       await pyodide.runPythonAsync(koan.setup);
 
