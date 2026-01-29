@@ -56,14 +56,29 @@ export default function Certificate() {
         return;
       }
 
-      const canvas = await html2canvas(badge, {
+      const sourceCanvas = await html2canvas(badge, {
         backgroundColor: '#111827',
-        scale: 2, // Higher quality
+        scale: 2, // Higher quality capture
         logging: false,
       });
 
+      // Resize to 400x480 for standard badge size
+      const outputWidth = 400;
+      const outputHeight = 480;
+      const outputCanvas = document.createElement('canvas');
+      outputCanvas.width = outputWidth;
+      outputCanvas.height = outputHeight;
+      const ctx = outputCanvas.getContext('2d');
+
+      // Fill background
+      ctx.fillStyle = '#111827';
+      ctx.fillRect(0, 0, outputWidth, outputHeight);
+
+      // Draw scaled badge
+      ctx.drawImage(sourceCanvas, 0, 0, outputWidth, outputHeight);
+
       // Convert to blob and download
-      canvas.toBlob((blob) => {
+      outputCanvas.toBlob((blob) => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.download = `pyspark-koans-achievement-badge.png`;
