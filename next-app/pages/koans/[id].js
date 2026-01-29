@@ -153,7 +153,7 @@ _stdout_capture.getvalue()
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100">
+    <div className="h-screen bg-gray-950 text-gray-100 overflow-hidden">
       {/* Completion Modal */}
       <CompletionModal
         isOpen={showCompletionModal}
@@ -188,7 +188,7 @@ _stdout_capture.getvalue()
         />
       )}
 
-      <div className="flex">
+      <div className="flex h-full">
         {/* Sidebar */}
         <div className={`
           fixed lg:static inset-y-0 left-0 z-40
@@ -206,7 +206,7 @@ _stdout_capture.getvalue()
         </div>
 
         {/* Main content */}
-        <div className="flex-1 p-6 overflow-y-auto lg:ml-0">
+        <div className="flex-1 p-6 overflow-y-auto lg:ml-0 h-full">
           <div className="max-w-6xl mx-auto">
             <KoanHeader koan={koan} isComplete={isComplete(koan.id)} />
 

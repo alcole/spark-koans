@@ -22,7 +22,7 @@ export default function Sidebar({ currentKoanId, progress, onKoanSelect }) {
   };
 
   return (
-    <div className="w-72 min-h-screen bg-gray-900 border-r border-gray-800 p-4 overflow-y-auto flex flex-col">
+    <div className="w-72 h-screen bg-gray-900 border-r border-gray-800 p-4 overflow-y-auto flex flex-col">
       <div className="mb-6">
         <Link href="/" className="block hover:opacity-80 transition-opacity">
           <h1 className="text-2xl font-bold text-orange-500 mb-1 cursor-pointer">PySpark Koans</h1>
