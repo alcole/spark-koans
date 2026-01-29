@@ -18,7 +18,9 @@ data = [("Alice", 34, "Engineering"), ("Bob", 45, "Sales"), ("Charlie", 29, "Eng
 df = spark.createDataFrame(data, ["name", "age", "department"])
 `,
 
-  template: `# Write the DataFrame as a Delta table
+  template: `from delta.tables import DeltaTable
+
+# Write the DataFrame as a Delta table
 df.write.___("delta").mode("overwrite").save("/data/employees")
 
 # Read it back

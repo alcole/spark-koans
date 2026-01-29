@@ -12,7 +12,9 @@ const koan = {
 data = [("Alice", "34"), ("Bob", "45")]
 df = spark.createDataFrame(data, ["name", "age_str"])
 `,
-    template: `# Cast age_str from string to integer
+    template: `from pyspark.sql.functions import col
+
+# Cast age_str from string to integer
 result = df.withColumn("age", col("age_str").cast("___"))
 
 # Verify we can do math on the new column

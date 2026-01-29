@@ -21,7 +21,9 @@ data2 = [("Alice", 100), ("Bob", 200)]
 df2 = spark.createDataFrame(data2, ["name", "balance"])
 df2.write.format("delta").mode("overwrite").save("/data/accounts")
 `,
-    template: `# Get the Delta table
+    template: `from delta.tables import DeltaTable
+
+# Get the Delta table
 dt = DeltaTable.forPath(spark, "/data/accounts")
 
 # Get the full history

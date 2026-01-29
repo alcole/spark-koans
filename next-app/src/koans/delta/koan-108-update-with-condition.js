@@ -15,7 +15,8 @@ data = [("Alice", 100, "basic"), ("Bob", 200, "premium"), ("Charlie", 50, "basic
 df = spark.createDataFrame(data, ["name", "balance", "tier"])
 df.write.format("delta").save("/data/accounts")
 `,
-    template: `from pyspark.sql.functions import col
+    template: `from delta.tables import DeltaTable
+from pyspark.sql.functions import col
 
 # Get the Delta table
 dt = DeltaTable.forPath(spark, "/data/accounts")

@@ -17,7 +17,9 @@ for i in range(3):
     df = spark.createDataFrame(data, ["id", "data"])
     df.write.format("delta").mode("overwrite").save("/data/versions")
 `,
-    template: `# Get the Delta table  
+    template: `from delta.tables import DeltaTable
+
+# Get the Delta table
 dt = DeltaTable.forPath(spark, "/data/versions")
 
 # Check we have multiple versions
