@@ -16,9 +16,14 @@ export default function Home() {
         <meta property="og:description" content="Master PySpark and Delta Lake through interactive exercises. Learn by doing with hands-on koans." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://spark-koans.com/" />
-        <meta name="twitter:card" content="summary" />
+        <meta property="og:image" content="https://spark-koans.com/api/og-homepage" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="PySpark Koans - Master PySpark Through Practice" />
         <meta name="twitter:description" content="Master PySpark and Delta Lake through interactive exercises. Learn by doing with hands-on koans." />
+        <meta name="twitter:image" content="https://spark-koans.com/api/og-homepage" />
+        <link rel="canonical" href="https://spark-koans.com/" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "WebSite",
