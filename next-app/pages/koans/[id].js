@@ -3,6 +3,7 @@
  * Dynamic route: /koans/1, /koans/2, etc.
  */
 
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { getKoan, getAllKoanIds, getKoanStats } from '../../src/koans';
@@ -153,7 +154,13 @@ _stdout_capture.getvalue()
   }
 
   return (
-    <div className="h-screen bg-gray-950 text-gray-100 overflow-hidden">
+    <>
+      <Head>
+        <title>{`${koan.title} - PySpark Koans`}</title>
+        <meta name="description" content={koan.description || `An interactive ${koan.category} exercise for learning PySpark.`} />
+      </Head>
+
+      <div className="h-screen bg-gray-950 text-gray-100 overflow-hidden">
       {/* Completion Modal */}
       <CompletionModal
         isOpen={showCompletionModal}
@@ -287,6 +294,7 @@ _stdout_capture.getvalue()
         </div>
       </div>
     </div>
+    </>
   );
 }
 
