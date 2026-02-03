@@ -19,6 +19,7 @@ export default function About() {
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="About - PySpark Koans" />
         <meta name="twitter:description" content="About PySpark Koans - Learn PySpark and Delta Lake through interactive exercises" />
+        <link rel="canonical" href="https://spark-koans.com/about" />
       </Head>
 
       <div className="bg-gray-950 text-gray-100 min-h-screen">

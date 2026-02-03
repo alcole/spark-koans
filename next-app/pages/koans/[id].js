@@ -175,6 +175,7 @@ _stdout_capture.getvalue()
         <meta name="twitter:title" content={koan.title} />
         <meta name="twitter:description" content={koan.description || `An interactive ${koan.category} exercise for learning PySpark.`} />
         <meta name="twitter:image" content={ogImageUrl} />
+        <link rel="canonical" href={`${BASE_URL}/koans/${koan.id}`} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "LearningResource",
