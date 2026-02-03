@@ -18,7 +18,7 @@ import usePyodide from '../../src/hooks/usePyodide';
 import useKoanProgress from '../../src/hooks/useKoanProgress';
 import { parseAndFormatError, detectUnreplacedPlaceholders } from '../../src/utils/errorParser';
 
-const BASE_URL = 'https://spark-koans.vercel.app';
+const BASE_URL = 'https://spark-koans.com';
 
 export default function KoanPage({ koan }) {
   const router = useRouter();
@@ -174,6 +174,21 @@ _stdout_capture.getvalue()
         <meta name="twitter:title" content={koan.title} />
         <meta name="twitter:description" content={koan.description || `An interactive ${koan.category} exercise for learning PySpark.`} />
         <meta name="twitter:image" content={ogImageUrl} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LearningResource",
+          "name": koan.title,
+          "description": koan.description || `An interactive ${koan.category} exercise for learning PySpark.`,
+          "url": `${BASE_URL}/koans/${koan.id}`,
+          "learningResourceType": "exercise",
+          "educationalLevel": koan.difficulty.charAt(0).toUpperCase() + koan.difficulty.slice(1),
+          "teaches": koan.category,
+          "provider": {
+            "@type": "Organization",
+            "name": "PySpark Koans",
+            "url": BASE_URL
+          }
+        }) }} />
       </Head>
 
       <div className="h-screen bg-gray-950 text-gray-100 overflow-hidden">

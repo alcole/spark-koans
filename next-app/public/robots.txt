@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://spark-koans.vercel.app/sitemap.xml
+Sitemap: https://spark-koans.com/sitemap.xml

@@ -1,6 +1,6 @@
 import { getAllKoanIds } from '../src/koans';
 
-const BASE_URL = 'https://spark-koans.vercel.app';
+const BASE_URL = 'https://spark-koans.com';
 
 const staticPages = [
   { path: '',       priority: '1.0' },
