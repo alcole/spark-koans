@@ -18,6 +18,8 @@ import usePyodide from '../../src/hooks/usePyodide';
 import useKoanProgress from '../../src/hooks/useKoanProgress';
 import { parseAndFormatError, detectUnreplacedPlaceholders } from '../../src/utils/errorParser';
 
+const BASE_URL = 'https://spark-koans.vercel.app';
+
 export default function KoanPage({ koan }) {
   const router = useRouter();
   const [code, setCode] = useState('');
@@ -145,6 +147,8 @@ _stdout_capture.getvalue()
   const prevKoanId = currentIndex > 0 ? allIds[currentIndex - 1] : null;
   const nextKoanId = currentIndex < allIds.length - 1 ? allIds[currentIndex + 1] : null;
 
+  const ogImageUrl = `${BASE_URL}/api/og-koan?${new URLSearchParams({ title: koan.title, category: koan.category, difficulty: koan.difficulty })}`;
+
   if (!koan) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
@@ -158,6 +162,18 @@ _stdout_capture.getvalue()
       <Head>
         <title>{`${koan.title} - PySpark Koans`}</title>
         <meta name="description" content={koan.description || `An interactive ${koan.category} exercise for learning PySpark.`} />
+        <meta property="og:site_name" content="PySpark Koans" />
+        <meta property="og:title" content={koan.title} />
+        <meta property="og:description" content={koan.description || `An interactive ${koan.category} exercise for learning PySpark.`} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`${BASE_URL}/koans/${koan.id}`} />
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={koan.title} />
+        <meta name="twitter:description" content={koan.description || `An interactive ${koan.category} exercise for learning PySpark.`} />
+        <meta name="twitter:image" content={ogImageUrl} />
       </Head>
 
       <div className="h-screen bg-gray-950 text-gray-100 overflow-hidden">
