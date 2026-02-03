@@ -17,6 +17,22 @@ export default function App({ Component, pageProps }) {
         data-cf-beacon='{"token": "4dcca25d30504b899a50f0b5dde26810"}'
         strategy="afterInteractive"
       />
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-H9YVSSF5G8"
+        strategy="afterInteractive"
+      />
+      <Script
+        id="google-analytics"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-H9YVSSF5G8');
+          `,
+        }}
+      />
     </>
   );
 }
