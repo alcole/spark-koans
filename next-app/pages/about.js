@@ -11,6 +11,14 @@ export default function About() {
       <Head>
         <title>About - PySpark Koans</title>
         <meta name="description" content="About PySpark Koans - Learn PySpark and Delta Lake through interactive exercises" />
+        <meta property="og:site_name" content="PySpark Koans" />
+        <meta property="og:title" content="About - PySpark Koans" />
+        <meta property="og:description" content="About PySpark Koans - Learn PySpark and Delta Lake through interactive exercises" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://spark-koans.vercel.app/about" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="About - PySpark Koans" />
+        <meta name="twitter:description" content="About PySpark Koans - Learn PySpark and Delta Lake through interactive exercises" />
       </Head>
 
       <div className="bg-gray-950 text-gray-100 min-h-screen">

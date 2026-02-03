@@ -11,6 +11,14 @@ export default function Home() {
       <Head>
         <title>PySpark Koans - Master PySpark Through Practice</title>
         <meta name="description" content="Master PySpark and Delta Lake through interactive exercises. Learn by doing with hands-on koans." />
+        <meta property="og:site_name" content="PySpark Koans" />
+        <meta property="og:title" content="PySpark Koans - Master PySpark Through Practice" />
+        <meta property="og:description" content="Master PySpark and Delta Lake through interactive exercises. Learn by doing with hands-on koans." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://spark-koans.vercel.app/" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="PySpark Koans - Master PySpark Through Practice" />
+        <meta name="twitter:description" content="Master PySpark and Delta Lake through interactive exercises. Learn by doing with hands-on koans." />
       </Head>
 
       <style jsx>{`

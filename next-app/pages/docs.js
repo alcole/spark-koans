@@ -34,6 +34,14 @@ export default function DocsPage() {
       <Head>
         <title>Documentation Links - PySpark Koans</title>
         <meta name="description" content="Essential documentation links for PySpark and Delta Lake" />
+        <meta property="og:site_name" content="PySpark Koans" />
+        <meta property="og:title" content="Documentation Links - PySpark Koans" />
+        <meta property="og:description" content="Essential documentation links for PySpark and Delta Lake" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://spark-koans.vercel.app/docs" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Documentation Links - PySpark Koans" />
+        <meta name="twitter:description" content="Essential documentation links for PySpark and Delta Lake" />
       </Head>
 
       <div className="min-h-screen bg-gray-950 text-gray-100 py-8">
