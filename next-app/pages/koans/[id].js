@@ -147,7 +147,8 @@ _stdout_capture.getvalue()
   const prevKoanId = currentIndex > 0 ? allIds[currentIndex - 1] : null;
   const nextKoanId = currentIndex < allIds.length - 1 ? allIds[currentIndex + 1] : null;
 
-  const ogImageUrl = `${BASE_URL}/api/og-koan?${new URLSearchParams({ title: koan.title, category: koan.category, difficulty: koan.difficulty })}`;
+  const difficulty = koan.difficulty || 'beginner';
+  const ogImageUrl = `${BASE_URL}/api/og-koan?${new URLSearchParams({ title: koan.title, category: koan.category, difficulty })}`;
 
   if (!koan) {
     return (
@@ -181,7 +182,7 @@ _stdout_capture.getvalue()
           "description": koan.description || `An interactive ${koan.category} exercise for learning PySpark.`,
           "url": `${BASE_URL}/koans/${koan.id}`,
           "learningResourceType": "exercise",
-          "educationalLevel": koan.difficulty.charAt(0).toUpperCase() + koan.difficulty.slice(1),
+          "educationalLevel": difficulty.charAt(0).toUpperCase() + difficulty.slice(1),
           "teaches": koan.category,
           "provider": {
             "@type": "Organization",
