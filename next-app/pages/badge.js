@@ -30,16 +30,18 @@ export default function Certificate() {
   const shareText = `🎉 I just completed all ${stats.total} PySpark Koans! Master your PySpark skills through interactive exercises. #PySpark #DataEngineering #Learning`;
   const shareUrl = typeof window !== 'undefined' ? window.location.origin : 'https://spark-koans.vercel.app';
 
-  // Static OG image URL for badge (SVG converted to PNG)
-  const ogImageUrl = 'https://spark-koans.vercel.app/api/og-badge';
+  // Dynamic OG image URL for badge
+  const ogImageUrl = `${shareUrl}/api/og-badge`;
 
   const shareOnTwitter = () => {
-    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+    const badgeUrl = `${shareUrl}/badge`;
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(badgeUrl)}`;
     window.open(url, '_blank', 'width=550,height=420');
   };
 
   const shareOnLinkedIn = () => {
-    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+    const badgeUrl = `${shareUrl}/badge`;
+    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(badgeUrl)}`;
     window.open(url, '_blank', 'width=550,height=500');
   };
 
@@ -54,14 +56,29 @@ export default function Certificate() {
         return;
       }
 
-      const canvas = await html2canvas(badge, {
+      const sourceCanvas = await html2canvas(badge, {
         backgroundColor: '#111827',
-        scale: 2, // Higher quality
+        scale: 2, // Higher quality capture
         logging: false,
       });
 
+      // Resize to 400x480 for standard badge size
+      const outputWidth = 400;
+      const outputHeight = 480;
+      const outputCanvas = document.createElement('canvas');
+      outputCanvas.width = outputWidth;
+      outputCanvas.height = outputHeight;
+      const ctx = outputCanvas.getContext('2d');
+
+      // Fill background
+      ctx.fillStyle = '#111827';
+      ctx.fillRect(0, 0, outputWidth, outputHeight);
+
+      // Draw scaled badge
+      ctx.drawImage(sourceCanvas, 0, 0, outputWidth, outputHeight);
+
       // Convert to blob and download
-      canvas.toBlob((blob) => {
+      outputCanvas.toBlob((blob) => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.download = `pyspark-koans-achievement-badge.png`;
@@ -87,7 +104,7 @@ export default function Certificate() {
         <meta property="og:title" content="Completed all PySpark Koans!" />
         <meta property="og:description" content={`Successfully completed all ${stats.total} PySpark and Delta Lake exercises. Master your data engineering skills!`} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://spark-koans.vercel.app/badge" />
+        <meta property="og:url" content={`${shareUrl}/badge`} />
         <meta property="og:image" content={ogImageUrl} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
