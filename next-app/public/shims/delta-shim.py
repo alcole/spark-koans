@@ -3,6 +3,7 @@ Delta Lake Shim for Browser Environment
 Provides DeltaTable class and extends PySpark shim with Delta-compatible read/write
 """
 
+import re
 import pandas as pd
 from datetime import datetime
 
@@ -104,6 +105,23 @@ class DataFrameReader:
             raise NotImplementedError(f"Format {self._format} not supported")
 
 
+def _validate_eval_condition(condition, pdf):
+    """Validate a condition string before passing to pandas eval."""
+    if not isinstance(condition, str):
+        raise TypeError(f"Condition must be a string, got {type(condition).__name__}")
+    if not re.search(r'[=!<>]=|[<>]', condition):
+        raise ValueError(
+            f"Invalid condition '{condition}': must contain a comparison operator (==, !=, <, >, <=, >=)"
+        )
+    _LITERALS = {'True', 'False', 'None', 'and', 'or', 'not', 'in'}
+    identifiers = [t for t in re.findall(r'\b([a-zA-Z_]\w*)\b', condition) if t not in _LITERALS]
+    if not any(col in pdf.columns for col in identifiers):
+        raise ValueError(
+            f"No valid column names in condition '{condition}'. "
+            f"Available columns: {list(pdf.columns)}"
+        )
+
+
 # ============ MERGE BUILDER ============
 class MergeBuilder:
     """Builder for MERGE operations"""
@@ -145,15 +163,16 @@ class MergeBuilder:
         source_pdf = self._source_df._pdf.copy()
 
         # Parse condition like "target.name = source.name"
-        # Extract the column name (simplified parsing)
         condition = self._condition
-        if 'target.' in condition and 'source.' in condition:
-            # Extract column names
-            parts = condition.replace(' ', '').split('=')
-            target_col = parts[0].replace('target.', '')
-            source_col = parts[1].replace('source.', '')
+        match = re.match(r'^\s*target\.(\w+)\s*==?\s*source\.(\w+)\s*$', condition)
+        if match:
+            target_col = match.group(1)
+            source_col = match.group(2)
         else:
-            target_col = source_col = condition
+            raise ValueError(
+                f"Invalid merge condition: '{condition}'. "
+                f"Expected format: 'target.<column> = source.<column>'"
+            )
 
         # Find matching and non-matching rows
         matched_target_indices = []
@@ -259,7 +278,7 @@ class DeltaTable:
         pdf = _delta_tables[self._path]['versions'][-1].copy()
 
         if condition:
-            # Parse simple conditions like "is_active == False"
+            _validate_eval_condition(condition, pdf)
             mask = pdf.eval(condition)
             pdf = pdf[~mask].reset_index(drop=True)
         else:
@@ -281,6 +300,7 @@ class DeltaTable:
         pdf = _delta_tables[self._path]['versions'][-1].copy()
 
         if condition and set_values:
+            _validate_eval_condition(condition, pdf)
             mask = pdf.eval(condition)
             for col_name, value in set_values.items():
                 pdf.loc[mask, col_name] = value
