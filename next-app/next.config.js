@@ -1,5 +1,38 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Security headers
+  // Note: 'unsafe-eval' is required by Pyodide for WebAssembly compilation.
+  // 'unsafe-inline' is required by Next.js for hydration scripts and Tailwind styles.
+  headers: () => [
+    {
+      source: '/(.*)',
+      headers: [
+        {
+          key: 'Content-Security-Policy',
+          value: [
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net https://static.cloudflareinsights.com",
+            "style-src 'self' 'unsafe-inline'",
+            "img-src 'self' data: blob:",
+            "connect-src 'self' https://cdn.jsdelivr.net https://static.cloudflareinsights.com https://*.vercel-analytics.com",
+            "worker-src blob: https://cdn.jsdelivr.net",
+            "frame-ancestors 'none'",
+            "base-uri 'self'",
+            "form-action 'self'",
+          ].join('; '),
+        },
+        {
+          key: 'X-Frame-Options',
+          value: 'DENY',
+        },
+        {
+          key: 'X-Content-Type-Options',
+          value: 'nosniff',
+        },
+      ],
+    },
+  ],
+
   // Note: Removed 'output: export' to enable API routes for OG image generation
   // This requires deployment to a platform that supports serverless functions (e.g., Vercel)
 
