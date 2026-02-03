@@ -11,6 +11,25 @@ export default function Home() {
       <Head>
         <title>PySpark Koans - Master PySpark Through Practice</title>
         <meta name="description" content="Master PySpark and Delta Lake through interactive exercises. Learn by doing with hands-on koans." />
+        <meta property="og:site_name" content="PySpark Koans" />
+        <meta property="og:title" content="PySpark Koans - Master PySpark Through Practice" />
+        <meta property="og:description" content="Master PySpark and Delta Lake through interactive exercises. Learn by doing with hands-on koans." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://spark-koans.com/" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="PySpark Koans - Master PySpark Through Practice" />
+        <meta name="twitter:description" content="Master PySpark and Delta Lake through interactive exercises. Learn by doing with hands-on koans." />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "PySpark Koans",
+          "url": "https://spark-koans.com",
+          "description": "Master PySpark and Delta Lake through interactive exercises. Learn by doing with hands-on koans.",
+          "publisher": {
+            "@type": "Person",
+            "name": "Alex Cole"
+          }
+        }) }} />
       </Head>
 
       <style jsx>{`

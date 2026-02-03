@@ -28,7 +28,7 @@ export default function Certificate() {
   const isFullyComplete = progress.size === stats.total;
 
   const shareText = `🎉 I just completed all ${stats.total} PySpark Koans! Master your PySpark skills through interactive exercises. #PySpark #DataEngineering #Learning`;
-  const shareUrl = typeof window !== 'undefined' ? window.location.origin : 'https://spark-koans.vercel.app';
+  const shareUrl = typeof window !== 'undefined' ? window.location.origin : 'https://spark-koans.com';
 
   // Dynamic OG image URL for badge
   const ogImageUrl = `${shareUrl}/api/og-badge`;

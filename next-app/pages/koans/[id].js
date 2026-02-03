@@ -3,6 +3,7 @@
  * Dynamic route: /koans/1, /koans/2, etc.
  */
 
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { getKoan, getAllKoanIds, getKoanStats } from '../../src/koans';
@@ -16,6 +17,8 @@ import CompletionModal from '../../src/components/CompletionModal';
 import usePyodide from '../../src/hooks/usePyodide';
 import useKoanProgress from '../../src/hooks/useKoanProgress';
 import { parseAndFormatError, detectUnreplacedPlaceholders } from '../../src/utils/errorParser';
+
+const BASE_URL = 'https://spark-koans.com';
 
 export default function KoanPage({ koan }) {
   const router = useRouter();
@@ -144,6 +147,9 @@ _stdout_capture.getvalue()
   const prevKoanId = currentIndex > 0 ? allIds[currentIndex - 1] : null;
   const nextKoanId = currentIndex < allIds.length - 1 ? allIds[currentIndex + 1] : null;
 
+  const difficulty = koan.difficulty || 'beginner';
+  const ogImageUrl = `${BASE_URL}/api/og-koan?${new URLSearchParams({ title: koan.title, category: koan.category, difficulty })}`;
+
   if (!koan) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
@@ -153,7 +159,40 @@ _stdout_capture.getvalue()
   }
 
   return (
-    <div className="h-screen bg-gray-950 text-gray-100 overflow-hidden">
+    <>
+      <Head>
+        <title>{`${koan.title} - PySpark Koans`}</title>
+        <meta name="description" content={koan.description || `An interactive ${koan.category} exercise for learning PySpark.`} />
+        <meta property="og:site_name" content="PySpark Koans" />
+        <meta property="og:title" content={koan.title} />
+        <meta property="og:description" content={koan.description || `An interactive ${koan.category} exercise for learning PySpark.`} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`${BASE_URL}/koans/${koan.id}`} />
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={koan.title} />
+        <meta name="twitter:description" content={koan.description || `An interactive ${koan.category} exercise for learning PySpark.`} />
+        <meta name="twitter:image" content={ogImageUrl} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LearningResource",
+          "name": koan.title,
+          "description": koan.description || `An interactive ${koan.category} exercise for learning PySpark.`,
+          "url": `${BASE_URL}/koans/${koan.id}`,
+          "learningResourceType": "exercise",
+          "educationalLevel": difficulty.charAt(0).toUpperCase() + difficulty.slice(1),
+          "teaches": koan.category,
+          "provider": {
+            "@type": "Organization",
+            "name": "PySpark Koans",
+            "url": BASE_URL
+          }
+        }) }} />
+      </Head>
+
+      <div className="h-screen bg-gray-950 text-gray-100 overflow-hidden">
       {/* Completion Modal */}
       <CompletionModal
         isOpen={showCompletionModal}
@@ -287,6 +326,7 @@ _stdout_capture.getvalue()
         </div>
       </div>
     </div>
+    </>
   );
 }
 
