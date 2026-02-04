@@ -1,8 +1,8 @@
 # Roadmap
 
-## Google Analytics — Custom Event Tracking
+## Custom Event Tracking
 
-Page-view tracking is live (PR #18). The next step is custom events to get visibility into how learners actually use the koans.
+Page views are tracked via Vercel Analytics and Cloudflare Web Analytics (both cookie-free). The next step is custom events to get visibility into how learners actually use the koans.
 
 ### Proposed events
 
@@ -13,9 +13,3 @@ Page-view tracking is live (PR #18). The next step is custom events to get visib
 | `koan_completed` | Assertions pass | `koan_id`, `category`, `difficulty` |
 | `hint_viewed` | User reveals a hint | `koan_id`, `hint_index` |
 | `solution_viewed` | User reveals the solution | `koan_id` |
-
-### Implementation approach
-
-1. Add a small utility (`src/utils/analytics.js`) that wraps `gtag('event', ...)` — keeps the global off the rest of the codebase and makes it easy to swap out later.
-2. Call it from `pages/koans/[id].js` and whichever components own the Run button, hint, and solution reveal.
-3. No new dependencies or config changes needed beyond what PR #18 already added.
