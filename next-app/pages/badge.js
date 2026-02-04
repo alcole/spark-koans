@@ -114,6 +114,7 @@ export default function Certificate() {
         <meta name="twitter:title" content="Completed all PySpark Koans!" />
         <meta name="twitter:description" content={`Successfully completed all ${stats.total} PySpark and Delta Lake exercises.`} />
         <meta name="twitter:image" content={ogImageUrl} />
+        <link rel="canonical" href="https://spark-koans.com/badge" />
       </Head>
 
       <div className="min-h-screen bg-gray-950 text-gray-100 py-12 px-4">

@@ -42,6 +42,7 @@ export default function DocsPage() {
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="Documentation Links - PySpark Koans" />
         <meta name="twitter:description" content="Essential documentation links for PySpark and Delta Lake" />
+        <link rel="canonical" href="https://spark-koans.com/docs" />
       </Head>
 
       <div className="min-h-screen bg-gray-950 text-gray-100 py-8">

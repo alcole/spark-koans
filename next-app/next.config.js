@@ -11,10 +11,10 @@ const nextConfig = {
           key: 'Content-Security-Policy',
           value: [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net https://static.cloudflareinsights.com https://www.googletagmanager.com https://vercel.live",
+            "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net https://static.cloudflareinsights.com https://vercel.live",
             "style-src 'self' 'unsafe-inline'",
             "img-src 'self' data: blob:",
-            "connect-src 'self' https://cdn.jsdelivr.net https://static.cloudflareinsights.com https://*.vercel-analytics.com https://www.google-analytics.com https://vercel.live",
+            "connect-src 'self' https://cdn.jsdelivr.net https://static.cloudflareinsights.com https://*.vercel-analytics.com https://vercel.live",
             "worker-src blob: https://cdn.jsdelivr.net",
             "frame-ancestors 'none'",
             "base-uri 'self'",
