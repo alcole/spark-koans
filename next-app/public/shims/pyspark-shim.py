@@ -92,7 +92,7 @@ class Column:
         new_col._alias = name
         # Copy over any special attributes
         for attr in ['_agg_func', '_source_col', '_round_decimals', '_transform_func',
-                     '_is_window_func', '_window', '_sort_desc']:
+                     '_is_window_func', '_window', '_sort_desc', '_is_explode']:
             if hasattr(self, attr):
                 setattr(new_col, attr, getattr(self, attr))
         return new_col
