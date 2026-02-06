@@ -26,7 +26,7 @@ assert DeltaTable.isDeltaTable(spark, "products"), "Table should exist"
 print("✓ Table 'products' created")
 
 # Get the table and verify schema
-dt = DeltaTable.forPath(spark, "products")
+dt = DeltaTable.forName(spark, "products")
 df = dt.toDF()
 
 assert "name" in df.columns, "Should have 'name' column"

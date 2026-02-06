@@ -246,8 +246,22 @@ class DeltaTable:
         return DeltaTable(path)
 
     @staticmethod
-    def isDeltaTable(spark, path):
-        return path in _delta_tables
+    def forName(spark, table_name):
+        """Access a Delta table by its table name (for tables created with .tableName())"""
+        path = f"/tables/{table_name}"
+        if path not in _delta_tables:
+            raise ValueError(f"Delta table '{table_name}' not found")
+        return DeltaTable(path)
+
+    @staticmethod
+    def isDeltaTable(spark, path_or_name):
+        """Check if a Delta table exists at the given path or table name"""
+        # Check if it's a direct path
+        if path_or_name in _delta_tables:
+            return True
+        # Check if it's a table name (try /tables/{name})
+        table_path = f"/tables/{path_or_name}"
+        return table_path in _delta_tables
 
     def toDF(self):
         if self._path not in _delta_tables:
