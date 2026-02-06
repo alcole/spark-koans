@@ -1,5 +1,5 @@
 /**
- * Koan 32: Map Types
+ * Koan 202: Map Types
  * Category: Complex Types
  */
 

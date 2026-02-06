@@ -1,5 +1,5 @@
 /**
- * Koan 36: Higher-Order Function - transform
+ * Koan 206: Higher-Order Function - transform
  * Category: Higher-Order Functions
  */
 

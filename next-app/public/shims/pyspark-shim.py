@@ -33,25 +33,37 @@ class Column:
 
     # Comparison operators
     def __gt__(self, other):
+        if isinstance(other, Column):
+            return Column(self.name, f"({self.expr}) > ({other.expr})")
         return Column(self.name, f"({self.expr}) > {repr(other)}")
 
     def __lt__(self, other):
+        if isinstance(other, Column):
+            return Column(self.name, f"({self.expr}) < ({other.expr})")
         return Column(self.name, f"({self.expr}) < {repr(other)}")
 
     def __ge__(self, other):
+        if isinstance(other, Column):
+            return Column(self.name, f"({self.expr}) >= ({other.expr})")
         return Column(self.name, f"({self.expr}) >= {repr(other)}")
 
     def __le__(self, other):
+        if isinstance(other, Column):
+            return Column(self.name, f"({self.expr}) <= ({other.expr})")
         return Column(self.name, f"({self.expr}) <= {repr(other)}")
 
     def __eq__(self, other):
         if other is None:
             return Column(self.name, f"({self.expr}).isna()")
+        if isinstance(other, Column):
+            return Column(self.name, f"({self.expr}) == ({other.expr})")
         return Column(self.name, f"({self.expr}) == {repr(other)}")
 
     def __ne__(self, other):
         if other is None:
             return Column(self.name, f"({self.expr}).notna()")
+        if isinstance(other, Column):
+            return Column(self.name, f"({self.expr}) != ({other.expr})")
         return Column(self.name, f"({self.expr}) != {repr(other)}")
 
     # Arithmetic operators
@@ -74,6 +86,11 @@ class Column:
         if isinstance(other, Column):
             return Column(self.name, f"({self.expr}) / ({other.expr})")
         return Column(self.name, f"({self.expr}) / {repr(other)}")
+
+    def __mod__(self, other):
+        if isinstance(other, Column):
+            return Column(self.name, f"({self.expr}) % ({other.expr})")
+        return Column(self.name, f"({self.expr}) % {repr(other)}")
 
     # Logical operators
     def __and__(self, other):
@@ -240,7 +257,13 @@ class DataFrame:
     def collect(self):
         rows = []
         for _, row in self._pdf.iterrows():
-            row_dict = {k: (None if pd.isna(v) else v) for k, v in row.items()}
+            row_dict = {}
+            for k, v in row.items():
+                try:
+                    row_dict[k] = None if pd.isna(v) else v
+                except (ValueError, TypeError):
+                    # pd.isna raises ValueError for list/dict; keep as-is
+                    row_dict[k] = v
             rows.append(Row(**row_dict))
         return rows
 
@@ -248,7 +271,13 @@ class DataFrame:
         if len(self._pdf) == 0:
             return None
         row = self._pdf.iloc[0]
-        return Row(**{k: (None if pd.isna(v) else v) for k, v in row.items()})
+        row_dict = {}
+        for k, v in row.items():
+            try:
+                row_dict[k] = None if pd.isna(v) else v
+            except (ValueError, TypeError):
+                row_dict[k] = v
+        return Row(**row_dict)
 
     def select(self, *cols):
         result_cols = {}
@@ -330,15 +359,17 @@ class DataFrame:
                     else:
                         pdf[name] = range(1, len(pdf) + 1)
                 elif window_func == 'rank':
+                    sort_cols_names = [oc if isinstance(oc, str) else oc.name for oc in window._order_cols]
                     if partition_cols:
-                        pdf[name] = pdf.groupby(partition_cols).cumcount() + 1
+                        pdf[name] = pdf.groupby(partition_cols)[sort_cols_names[0]].rank(method='min').astype(int)
                     else:
-                        pdf[name] = range(1, len(pdf) + 1)
+                        pdf[name] = pdf[sort_cols_names[0]].rank(method='min').astype(int)
                 elif window_func == 'dense_rank':
+                    sort_cols_names = [oc if isinstance(oc, str) else oc.name for oc in window._order_cols]
                     if partition_cols:
-                        pdf[name] = pdf.groupby(partition_cols).cumcount() + 1
+                        pdf[name] = pdf.groupby(partition_cols)[sort_cols_names[0]].rank(method='dense').astype(int)
                     else:
-                        pdf[name] = range(1, len(pdf) + 1)
+                        pdf[name] = pdf[sort_cols_names[0]].rank(method='dense').astype(int)
                 elif window_func == 'lag':
                     source_col = col.name
                     offset = col._window_args.get('offset', 1)
@@ -595,12 +626,13 @@ def initcap(col_expr):
 def concat(*cols):
     """Concatenate multiple columns"""
     def transform(pdf):
-        result = pdf[cols[0].name].astype(str)
-        for c in cols[1:]:
+        result = None
+        for c in cols:
             if hasattr(c, '_lit_value'):
-                result = result + str(c._lit_value)
+                part = pd.Series([str(c._lit_value)] * len(pdf))
             else:
-                result = result + pdf[c.name].astype(str)
+                part = pdf[c.name].astype(str)
+            result = part if result is None else result + part
         return result
 
     new_col = Column("concat_result")
@@ -1094,12 +1126,6 @@ def _df_schema(self):
 
 DataFrame.schema = _df_schema
 
-# Patch DataFrame to carry schema through operations
-_original_select = DataFrame.select
-def _schema_aware_select(self, *cols):
-    result = _original_select(self, *cols)
-    return result
-DataFrame.select = _schema_aware_select
 
 
 # ============ MAP FUNCTIONS ============
@@ -1775,7 +1801,16 @@ class StreamingQuery:
                 break
 
         if not has_twis:
-            self._last_batch = batch_df.collect()
+            # Apply regular transformations (filter, select, withColumn)
+            result_df = batch_df
+            for t in self._sdf._transformations:
+                if t[0] == 'filter':
+                    result_df = result_df.filter(t[1])
+                elif t[0] == 'select':
+                    result_df = result_df.select(*t[1])
+                elif t[0] == 'withColumn':
+                    result_df = result_df.withColumn(t[1], t[2])
+            self._last_batch = result_df.collect()
 
         self._progress_history.append({
             "numInputRows": len(self._last_batch),

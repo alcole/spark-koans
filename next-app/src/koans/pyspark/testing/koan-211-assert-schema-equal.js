@@ -1,5 +1,5 @@
 /**
- * Koan 41: assertSchemaEqual
+ * Koan 211: assertSchemaEqual
  * Category: Testing
  */
 

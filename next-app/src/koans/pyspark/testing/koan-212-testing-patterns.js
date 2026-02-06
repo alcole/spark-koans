@@ -1,5 +1,5 @@
 /**
- * Koan 42: Testing Patterns
+ * Koan 212: Testing Patterns
  * Category: Testing
  */
 

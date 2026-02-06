@@ -1,5 +1,5 @@
 /**
- * Koan 39: assertDataFrameEqual Basics
+ * Koan 209: assertDataFrameEqual Basics
  * Category: Testing
  */
 
@@ -7,7 +7,7 @@ const koan = {
   id: 209,
   title: "assertDataFrameEqual Basics",
   category: "Testing",
-  difficulty: "advanced",
+  difficulty: "intermediate",
   description: "Use assertDataFrameEqual to compare DataFrames in tests. Replace ___ with the correct code.",
   setup: `
 data = [("Alice", 30), ("Bob", 25), ("Carol", 35)]

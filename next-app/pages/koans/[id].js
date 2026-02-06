@@ -33,8 +33,7 @@ export default function KoanPage({ koan }) {
 
   const { pyodide, isLoading, error: pyodideError, loadDeltaShim, shimsLoaded } = usePyodide();
   const { markComplete, isComplete, progress } = useKoanProgress();
-  const stats = getKoanStats();
-  const currentTrack = getTrackForKoan(koan.id);
+  const currentTrack = koan ? getTrackForKoan(koan.id) : 'standard';
   const trackIds = getKoanIdsByTrack(currentTrack);
   const trackDef = TRACKS[currentTrack];
 
@@ -148,9 +147,6 @@ _stdout_capture.getvalue()
   const prevKoanId = currentIndex > 0 ? trackIds[currentIndex - 1] : null;
   const nextKoanId = currentIndex < trackIds.length - 1 ? trackIds[currentIndex + 1] : null;
 
-  const difficulty = koan.difficulty || 'beginner';
-  const ogImageUrl = `${BASE_URL}/api/og-koan?${new URLSearchParams({ title: koan.title, category: koan.category, difficulty })}`;
-
   if (!koan) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
@@ -158,6 +154,9 @@ _stdout_capture.getvalue()
       </div>
     );
   }
+
+  const difficulty = koan.difficulty || 'beginner';
+  const ogImageUrl = `${BASE_URL}/api/og-koan?${new URLSearchParams({ title: koan.title, category: koan.category, difficulty })}`;
 
   return (
     <>

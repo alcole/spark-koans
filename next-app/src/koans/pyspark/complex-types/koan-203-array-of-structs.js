@@ -1,5 +1,5 @@
 /**
- * Koan 33: Arrays of Structs
+ * Koan 203: Arrays of Structs
  * Category: Complex Types
  */
 

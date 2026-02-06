@@ -1,5 +1,5 @@
 /**
- * Koan 45: applyInPandas (Grouped Map)
+ * Koan 215: applyInPandas (Grouped Map)
  * Category: Pandas Integration
  */
 
@@ -22,6 +22,7 @@ data = [
 df = spark.createDataFrame(data, ["dept", "name", "salary"])
 `,
   template: `# applyInPandas: apply a function to each group as a pandas DataFrame
+from pyspark.sql.functions import col
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType
 import pandas as pd
 

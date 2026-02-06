@@ -2,7 +2,7 @@
  * Sidebar Navigation Component
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getAllKoanIds, getKoan, getAllCategories, getKoansByCategory, getTrackForKoan, getKoanIdsByTrack, getCategoriesByTrack, TRACKS } from '../koans';
 
@@ -16,6 +16,17 @@ export default function Sidebar({ currentKoanId, progress, onKoanSelect }) {
     // All categories expanded by default
     Object.fromEntries(categories.map(cat => [cat, true]))
   );
+
+  // Update expanded categories when track changes
+  useEffect(() => {
+    setExpandedCategories(prev => {
+      const updated = { ...prev };
+      categories.forEach(cat => {
+        if (!(cat in updated)) updated[cat] = true;
+      });
+      return updated;
+    });
+  }, [track]);
 
   const isAdvanced = track === 'advanced';
   const accentColor = isAdvanced ? 'purple' : 'orange';
@@ -125,7 +136,7 @@ export default function Sidebar({ currentKoanId, progress, onKoanSelect }) {
                         }`}
                       >
                         <span
-                          className={`w-5 h-5 rounded flex items-center justify-center text-xs ${
+                          className={`min-w-[1.5rem] h-5 px-1 rounded flex items-center justify-center text-xs ${
                             isComplete
                               ? 'bg-green-600 text-white'
                               : 'bg-gray-700 text-gray-400'

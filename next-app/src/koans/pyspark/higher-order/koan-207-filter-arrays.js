@@ -1,5 +1,5 @@
 /**
- * Koan 37: Higher-Order Function - filter
+ * Koan 207: Higher-Order Function - filter
  * Category: Higher-Order Functions
  */
 
