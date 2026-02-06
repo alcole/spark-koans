@@ -1,14 +1,17 @@
 /**
  * Koan 105: Table History
  * Category: Delta Lake
+ * Difficulty: Beginner
  */
 
 const koan = {
-    id: 105,
-    title: "Table History",
-    category: "Delta Lake",
-    description: "View the history of operations on a Delta table. Replace ___ with the correct code.",
-    setup: `
+  id: 105,
+  title: "Table History",
+  category: "Delta Lake",
+  difficulty: "beginner",
+  description: "View the history of operations on a Delta table. Replace ___ with the correct code.",
+
+  setup: `
 _reset_delta_tables()
 
 # Create and modify table multiple times
@@ -21,7 +24,8 @@ data2 = [("Alice", 100), ("Bob", 200)]
 df2 = spark.createDataFrame(data2, ["name", "balance"])
 df2.write.format("delta").mode("overwrite").save("/data/accounts")
 `,
-    template: `from delta.tables import DeltaTable
+
+  template: `from delta.tables import DeltaTable
 
 # Get the Delta table
 dt = DeltaTable.forPath(spark, "/data/accounts")
@@ -44,11 +48,17 @@ operations = [row["operation"] for row in history_rows]
 print(f"✓ Operations recorded: {operations}")
 
 print("\\n🎉 Koan complete! You can now audit Delta table changes.")`,
-    solution: `history_df = dt.history()`,
-    hints: [
-      "The method to get history is simply .history()",
-      "It returns a DataFrame with version info"
-    ]
-  };
+
+  solution: `history_df = dt.history()`,
+
+  hints: [
+    "The method to get history is simply .history()",
+    "It returns a DataFrame with version info"
+  ],
+
+  examCoverage: ["DEA", "DEP"],
+  prerequisiteKoans: [101],
+  nextKoans: [106],
+};
 
 export default koan;

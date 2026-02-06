@@ -273,7 +273,8 @@ class DeltaTable:
         if self._path not in _delta_tables:
             raise ValueError(f"Delta table not found at {self._path}")
 
-        history = _delta_tables[self._path]['history']
+        # Return newest-first, matching real Delta Lake behavior
+        history = list(reversed(_delta_tables[self._path]['history']))
         if limit:
             history = history[:limit]
 
@@ -342,6 +343,10 @@ class DeltaTable:
             'operation': 'OPTIMIZE',
             'timestamp': datetime.now().isoformat()
         })
+        return self
+
+    def zorderBy(self, *cols):
+        """Simulate Z-ORDER BY - in browser, just a no-op modifier on optimize"""
         return self
 
 

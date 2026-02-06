@@ -1,14 +1,17 @@
 /**
  * Koan 106: OPTIMIZE and Z-ORDER
  * Category: Delta Lake
+ * Difficulty: Intermediate
  */
 
 const koan = {
-    id: 106,
-    title: "OPTIMIZE and Z-ORDER",
-    category: "Delta Lake",
-    description: "Optimize a Delta table for better query performance. Replace ___ with the correct code.",
-    setup: `
+  id: 106,
+  title: "OPTIMIZE and Z-ORDER",
+  category: "Delta Lake",
+  difficulty: "intermediate",
+  description: "Optimize a Delta table for better query performance. Replace ___ with the correct code.",
+
+  setup: `
 _reset_delta_tables()
 
 # Create table with data
@@ -16,7 +19,8 @@ data = [(i, f"user_{i}", i % 10) for i in range(100)]
 df = spark.createDataFrame(data, ["id", "name", "category"])
 df.write.format("delta").save("/data/users")
 `,
-    template: `from delta.tables import DeltaTable
+
+  template: `from delta.tables import DeltaTable
 
 # Get the Delta table
 dt = DeltaTable.forPath(spark, "/data/users")
@@ -35,12 +39,18 @@ dt.optimize().___("category")
 print("✓ Z-ORDER optimization applied on 'category' column")
 
 print("\\n🎉 Koan complete! You've learned table optimization.")`,
-    solution: `dt.optimize()\ndt.optimize().zorderBy("category")`,
-    hints: [
-      "Use .optimize() to compact files",
-      "Chain .zorderBy() for co-locating related data",
-      "Z-ORDER improves query performance on filtered columns"
-    ]
-  };
+
+  solution: `dt.optimize()\ndt.optimize().zorderBy("category")`,
+
+  hints: [
+    "Use .optimize() to compact files",
+    "Chain .zorderBy() for co-locating related data",
+    "Z-ORDER improves query performance on filtered columns"
+  ],
+
+  examCoverage: ["DEA", "DEP"],
+  prerequisiteKoans: [105],
+  nextKoans: [107],
+};
 
 export default koan;

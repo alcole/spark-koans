@@ -1,30 +1,34 @@
 /**
  * Koan 108: Update with Condition
  * Category: Delta Lake
+ * Difficulty: Beginner
  */
 
 const koan = {
-    id: 108,
-    title: "Update with Condition",
-    category: "Delta Lake",
-    description: "Update rows in a Delta table based on a condition. Replace ___ with the correct code.",
-    setup: `
+  id: 108,
+  title: "Update with Condition",
+  category: "Delta Lake",
+  difficulty: "beginner",
+  description: "Update rows in a Delta table based on a condition. Replace ___ with the correct code.",
+
+  setup: `
 _reset_delta_tables()
 
 data = [("Alice", 100, "basic"), ("Bob", 200, "premium"), ("Charlie", 50, "basic")]
 df = spark.createDataFrame(data, ["name", "balance", "tier"])
 df.write.format("delta").save("/data/accounts")
 `,
-    template: `from delta.tables import DeltaTable
+
+  template: `from delta.tables import DeltaTable
 from pyspark.sql.functions import col
 
 # Get the Delta table
 dt = DeltaTable.forPath(spark, "/data/accounts")
 
-# Give all premium users a bonus: set their balance to balance + 100
+# Give all premium users a bonus: set their balance to 300
 dt.___(
     condition="tier == 'premium'",
-    set_values={"___": 300}  # Bob's new balance
+    set_values={"___": 300}
 )
 
 # Verify Bob got the bonus
@@ -40,12 +44,18 @@ assert alice["balance"] == 100, f"Alice should still have 100"
 print("✓ Basic users unchanged")
 
 print("\\n🎉 Koan complete! You've learned Delta update operations.")`,
-    solution: `dt.update(condition="tier == 'premium'", set_values={"balance": 300})`,
-    hints: [
-      "Use .update() with condition and set_values",
-      "set_values is a dict mapping column names to new values",
-      "The column to update is 'balance'"
-    ]
-  };
+
+  solution: `dt.update(condition="tier == 'premium'", set_values={"balance": 300})`,
+
+  hints: [
+    "Use .update() with condition and set_values",
+    "set_values is a dict mapping column names to new values",
+    "The column to update is 'balance'"
+  ],
+
+  examCoverage: ["DEA", "DEP"],
+  prerequisiteKoans: [101],
+  nextKoans: [109],
+};
 
 export default koan;

@@ -1,14 +1,17 @@
 /**
  * Koan 104: MERGE - Selective Update
  * Category: Delta Lake
+ * Difficulty: Intermediate
  */
 
 const koan = {
-    id: 104,
-    title: "MERGE - Selective Update",
-    category: "Delta Lake",
-    description: "Use MERGE with specific column updates. Replace ___ with the correct code.",
-    setup: `
+  id: 104,
+  title: "MERGE - Selective Update",
+  category: "Delta Lake",
+  difficulty: "intermediate",
+  description: "Use MERGE with specific column updates. Replace ___ with the correct code.",
+
+  setup: `
 _reset_delta_tables()
 
 # Create target table with more columns
@@ -20,7 +23,8 @@ target_df.write.format("delta").save("/data/accounts")
 source_data = [("Alice", 500)]
 source_df = spark.createDataFrame(source_data, ["name", "new_balance"])
 `,
-    template: `from delta.tables import DeltaTable
+
+  template: `from delta.tables import DeltaTable
 from pyspark.sql.functions import col
 
 # Get the Delta table
@@ -48,12 +52,18 @@ assert bob["balance"] == 200, f"Bob should still have 200, got {bob['balance']}"
 print("✓ Bob's balance unchanged")
 
 print("\\n🎉 Koan complete! You've learned selective MERGE updates.")`,
-    solution: `dt.merge(source_df, "target.name = source.name").whenMatchedUpdate(set={"balance": "source.new_balance", "last_updated": "'2024-06-01'"}).execute()`,
-    hints: [
-      "whenMatchedUpdate takes a 'set' parameter with column mappings",
-      "Map target column names to source expressions",
-      "The target column to update is 'balance'"
-    ]
-  };
+
+  solution: `dt.merge(source_df, "target.name = source.name").whenMatchedUpdate(set={"balance": "source.new_balance", "last_updated": "'2024-06-01'"}).execute()`,
+
+  hints: [
+    "whenMatchedUpdate takes a 'set' parameter with column mappings",
+    "Map target column names to source expressions",
+    "The target column to update is 'balance'"
+  ],
+
+  examCoverage: ["DEA", "DEP"],
+  prerequisiteKoans: [103],
+  nextKoans: [105],
+};
 
 export default koan;
