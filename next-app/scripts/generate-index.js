@@ -91,11 +91,46 @@ export function getKoansByCategory(category) {
 }
 
 /**
- * Get all unique categories
+ * Get all unique categories in logical learning order
  */
 export function getAllCategories() {
+  const categoryOrder = [
+    'Basics',
+    'Column Operations',
+    'String Functions',
+    'Aggregations',
+    'Joins',
+    'Window Functions',
+    'Null Handling',
+    'Advanced',
+    'Complex Types',
+    'Schemas',
+    'Higher-Order Functions',
+    'Testing',
+    'Pandas Integration',
+    'Structured Streaming',
+    'Delta Lake'
+  ];
+
   const categories = [...new Set(Object.values(koansById).map(k => k.category))];
-  return categories.sort();
+
+  // Sort by custom order, with any unexpected categories at the end
+  return categories.sort((a, b) => {
+    const indexA = categoryOrder.indexOf(a);
+    const indexB = categoryOrder.indexOf(b);
+
+    // If both are in the order list, sort by their position
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+
+    // If only A is in the list, it comes first
+    if (indexA !== -1) return -1;
+
+    // If only B is in the list, it comes first
+    if (indexB !== -1) return 1;
+
+    // If neither is in the list, alphabetical
+    return a.localeCompare(b);
+  });
 }
 
 /**

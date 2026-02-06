@@ -36,6 +36,30 @@ import koan27 from './pyspark/nulls/koan-027-handling-nulls-fill-and-drop';
 import koan28 from './pyspark/advanced/koan-028-union-dataframes';
 import koan29 from './pyspark/advanced/koan-029-explode-arrays';
 import koan30 from './pyspark/advanced/koan-030-pivot-tables';
+import koan31 from './pyspark/complex-types/koan-031-nested-structs';
+import koan32 from './pyspark/complex-types/koan-032-map-types';
+import koan33 from './pyspark/complex-types/koan-033-array-of-structs';
+import koan34 from './pyspark/schemas/koan-034-defining-schemas';
+import koan35 from './pyspark/schemas/koan-035-schema-enforcement';
+import koan36 from './pyspark/higher-order/koan-036-transform';
+import koan37 from './pyspark/higher-order/koan-037-filter-arrays';
+import koan38 from './pyspark/higher-order/koan-038-aggregate-arrays';
+import koan39 from './pyspark/testing/koan-039-assert-dataframe-equal';
+import koan40 from './pyspark/testing/koan-040-assert-dataframe-advanced';
+import koan41 from './pyspark/testing/koan-041-assert-schema-equal';
+import koan42 from './pyspark/testing/koan-042-testing-patterns';
+import koan43 from './pyspark/pandas-integration/koan-043-topandas-and-back';
+import koan44 from './pyspark/pandas-integration/koan-044-pandas-udf-scalar';
+import koan45 from './pyspark/pandas-integration/koan-045-apply-in-pandas';
+import koan46 from './pyspark/pandas-integration/koan-046-map-in-pandas';
+import koan47 from './pyspark/streaming/koan-047-rate-source';
+import koan48 from './pyspark/streaming/koan-048-datastreamreader';
+import koan49 from './pyspark/streaming/koan-049-streaming-transformations';
+import koan50 from './pyspark/streaming/koan-050-streaming-queries';
+import koan51 from './pyspark/streaming/koan-051-stream-triggers';
+import koan52 from './pyspark/streaming/koan-052-monitoring-streams';
+import koan53 from './pyspark/streaming/koan-053-sliding-windows';
+import koan54 from './pyspark/streaming/koan-054-transform-with-state';
 import koan101 from './delta/koan-101-create-table';
 import koan102 from './delta/koan-102-time-travel-version';
 import koan103 from './delta/koan-103-merge-upsert-pattern';
@@ -80,6 +104,30 @@ const koansById = {
   28: koan28,
   29: koan29,
   30: koan30,
+  31: koan31,
+  32: koan32,
+  33: koan33,
+  34: koan34,
+  35: koan35,
+  36: koan36,
+  37: koan37,
+  38: koan38,
+  39: koan39,
+  40: koan40,
+  41: koan41,
+  42: koan42,
+  43: koan43,
+  44: koan44,
+  45: koan45,
+  46: koan46,
+  47: koan47,
+  48: koan48,
+  49: koan49,
+  50: koan50,
+  51: koan51,
+  52: koan52,
+  53: koan53,
+  54: koan54,
   101: koan101,
   102: koan102,
   103: koan103,
@@ -129,6 +177,12 @@ export function getAllCategories() {
     'Window Functions',
     'Null Handling',
     'Advanced',
+    'Complex Types',
+    'Schemas',
+    'Higher-Order Functions',
+    'Testing',
+    'Pandas Integration',
+    'Structured Streaming',
     'Delta Lake'
   ];
 

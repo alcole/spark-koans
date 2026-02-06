@@ -1869,15 +1869,51 @@ pyspark_sql_functions_module.dense_rank = dense_rank
 pyspark_sql_functions_module.lag = lag
 pyspark_sql_functions_module.lead = lead
 
+# Add new functions to pyspark.sql.functions
+pyspark_sql_functions_module.create_map = create_map
+pyspark_sql_functions_module.map_keys = map_keys
+pyspark_sql_functions_module.map_values = map_values
+pyspark_sql_functions_module.size = size
+pyspark_sql_functions_module.transform = transform
+pyspark_sql_functions_module.filter = _pyspark_array_filter
+pyspark_sql_functions_module.aggregate = aggregate
+pyspark_sql_functions_module.exists = exists
+pyspark_sql_functions_module.forall = forall
+pyspark_sql_functions_module.pandas_udf = pandas_udf
+pyspark_sql_functions_module.window = window
+
 # Add window to pyspark.sql.window
 pyspark_sql_window_module.Window = Window
 pyspark_sql_window_module.WindowSpec = WindowSpec
+
+# Add types to pyspark.sql.types
+pyspark_sql_types_module.DataType = DataType
+pyspark_sql_types_module.StringType = StringType
+pyspark_sql_types_module.IntegerType = IntegerType
+pyspark_sql_types_module.LongType = LongType
+pyspark_sql_types_module.DoubleType = DoubleType
+pyspark_sql_types_module.FloatType = FloatType
+pyspark_sql_types_module.BooleanType = BooleanType
+pyspark_sql_types_module.TimestampType = TimestampType
+pyspark_sql_types_module.DateType = DateType
+pyspark_sql_types_module.ArrayType = ArrayType
+pyspark_sql_types_module.MapType = MapType
+pyspark_sql_types_module.StructField = StructField
+pyspark_sql_types_module.StructType = StructType
+
+# Add testing utilities to pyspark.testing.utils
+pyspark_testing_utils_module.assertDataFrameEqual = assertDataFrameEqual
+pyspark_testing_utils_module.assertSchemaEqual = assertSchemaEqual
+pyspark_testing_module.utils = pyspark_testing_utils_module
 
 # Register modules in sys.modules
 sys.modules['pyspark'] = pyspark_module
 sys.modules['pyspark.sql'] = pyspark_sql_module
 sys.modules['pyspark.sql.functions'] = pyspark_sql_functions_module
 sys.modules['pyspark.sql.window'] = pyspark_sql_window_module
+sys.modules['pyspark.sql.types'] = pyspark_sql_types_module
+sys.modules['pyspark.testing'] = pyspark_testing_module
+sys.modules['pyspark.testing.utils'] = pyspark_testing_utils_module
 
 # Make spark available globally
 spark = SparkSession()
