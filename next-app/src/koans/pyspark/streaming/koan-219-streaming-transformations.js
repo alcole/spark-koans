@@ -1,5 +1,5 @@
 /**
- * Koan 49: Streaming Transformations
+ * Koan 219: Streaming Transformations
  * Category: Structured Streaming
  */
 
@@ -13,7 +13,7 @@ const koan = {
 `,
   template: `# The key insight: streaming DataFrames support the SAME transformations
 # as batch DataFrames - select, filter, withColumn, groupBy, etc.
-from pyspark.sql.functions import col, upper
+from pyspark.sql.functions import col, when
 
 # Start with a rate stream
 stream_df = spark.readStream.format("rate").option("rowsPerSecond", 10).load()

@@ -1,5 +1,5 @@
 /**
- * Koan 35: Schema Enforcement and Inspection
+ * Koan 205: Schema Enforcement and Inspection
  * Category: Schemas
  */
 

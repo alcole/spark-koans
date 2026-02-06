@@ -1,5 +1,5 @@
 /**
- * Koan 31: Working with Nested Structs
+ * Koan 201: Working with Nested Structs
  * Category: Complex Types
  */
 

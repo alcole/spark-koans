@@ -1,5 +1,5 @@
 /**
- * Koan 43: toPandas and createDataFrame from pandas
+ * Koan 213: toPandas and createDataFrame from pandas
  * Category: Pandas Integration
  */
 
@@ -7,13 +7,14 @@ const koan = {
   id: 213,
   title: "toPandas and Back",
   category: "Pandas Integration",
-  difficulty: "advanced",
+  difficulty: "intermediate",
   description: "Convert between Spark DataFrames and pandas DataFrames. Replace ___ with the correct code.",
   setup: `
 data = [("Alice", 30, 95000), ("Bob", 25, 72000), ("Carol", 35, 105000)]
 df = spark.createDataFrame(data, ["name", "age", "salary"])
 `,
   template: `# Convert Spark DataFrame to pandas
+from pyspark.sql.functions import col
 import pandas as pd
 
 pdf = df.___()

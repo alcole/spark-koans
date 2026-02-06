@@ -1,5 +1,5 @@
 /**
- * Koan 34: Defining Schemas with StructType
+ * Koan 204: Defining Schemas with StructType
  * Category: Schemas
  */
 
@@ -7,7 +7,7 @@ const koan = {
   id: 204,
   title: "Defining Schemas with StructType",
   category: "Schemas",
-  difficulty: "advanced",
+  difficulty: "intermediate",
   description: "Define explicit schemas using StructType and StructField. Replace ___ with the correct code.",
   setup: `
 data = [

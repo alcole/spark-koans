@@ -1,5 +1,5 @@
 /**
- * Koan 46: mapInPandas (Row-wise)
+ * Koan 216: mapInPandas (Row-wise)
  * Category: Pandas Integration
  */
 
@@ -22,6 +22,7 @@ df = spark.createDataFrame(data, ["name", "salary"])
 `,
   template: `# mapInPandas processes the entire DataFrame in pandas batches
 # Unlike applyInPandas, it doesn't require groupBy
+from pyspark.sql.functions import col
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType
 import pandas as pd
 

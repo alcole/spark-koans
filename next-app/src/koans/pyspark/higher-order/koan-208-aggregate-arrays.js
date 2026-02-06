@@ -1,5 +1,5 @@
 /**
- * Koan 38: Higher-Order Function - aggregate
+ * Koan 208: Higher-Order Function - aggregate
  * Category: Higher-Order Functions
  */
 

@@ -1,5 +1,5 @@
 /**
- * Koan 47: Rate Source
+ * Koan 217: Rate Source
  * Category: Structured Streaming
  */
 
@@ -7,7 +7,7 @@ const koan = {
   id: 217,
   title: "Rate Source for Testing",
   category: "Structured Streaming",
-  difficulty: "advanced",
+  difficulty: "intermediate",
   description: "Use the rate source to generate test streaming data. Replace ___ with the correct code.",
   setup: `
 # Streaming shim is available

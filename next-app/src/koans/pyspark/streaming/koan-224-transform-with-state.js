@@ -1,5 +1,5 @@
 /**
- * Koan 54: transformWithStateInPandas
+ * Koan 224: transformWithStateInPandas
  * Category: Structured Streaming
  */
 
@@ -14,7 +14,7 @@ from pyspark.sql.types import StructType, StructField, StringType, IntegerType, 
 `,
   template: `# transformWithStateInPandas: custom stateful processing on streaming data
 # Each group maintains its own state across micro-batches
-from pyspark.sql.functions import col
+from pyspark.sql.functions import col, when
 import pandas as pd
 
 # Define output schema
