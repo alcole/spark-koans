@@ -1,20 +1,24 @@
 /**
  * Koan 109: Create Table with Builder
  * Category: Delta Lake
+ * Difficulty: Intermediate
  */
 
 const koan = {
-    id: 109,
-    title: "Create Table with Builder",
-    category: "Delta Lake",
-    description: "Create a Delta table with an explicit schema using the builder API. Replace ___ with the correct code.",
-    setup: `
+  id: 109,
+  title: "Create Table with Builder",
+  category: "Delta Lake",
+  difficulty: "intermediate",
+  description: "Create a Delta table with an explicit schema using the builder API. Replace ___ with the correct code.",
+
+  setup: `
 _reset_delta_tables()
 `,
-    template: `from delta.tables import DeltaTable
+
+  template: `from delta.tables import DeltaTable
 
 # Create a Delta table with explicit schema
-DeltaTable._____(spark) \\
+DeltaTable.___(spark) \\
     .tableName("products") \\
     .addColumn("id", "INT") \\
     .addColumn("___", "STRING") \\
@@ -37,12 +41,18 @@ assert df.count() == 0, "New table should be empty"
 print("✓ Table is empty (ready for data)")
 
 print("\\n🎉 Koan complete! You've learned the DeltaTable builder.")`,
-    solution: `DeltaTable.create(spark).tableName("products").addColumn("id", "INT").addColumn("name", "STRING").addColumn("price", "DOUBLE").execute()`,
-    hints: [
-      "Use DeltaTable.create(spark) to start the builder",
-      "The missing column name is 'name'",
-      "Don't forget .execute() at the end"
-    ]
-  };
+
+  solution: `DeltaTable.create(spark).tableName("products").addColumn("id", "INT").addColumn("name", "STRING").addColumn("price", "DOUBLE").execute()`,
+
+  hints: [
+    "Use DeltaTable.create(spark) to start the builder",
+    "The missing column name is 'name'",
+    "Don't forget .execute() at the end"
+  ],
+
+  examCoverage: ["DEA", "DEP"],
+  prerequisiteKoans: [101],
+  nextKoans: [110],
+};
 
 export default koan;

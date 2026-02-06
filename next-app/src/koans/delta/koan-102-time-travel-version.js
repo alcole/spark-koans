@@ -1,14 +1,17 @@
 /**
  * Koan 102: Time Travel - Version
  * Category: Delta Lake
+ * Difficulty: Beginner
  */
 
 const koan = {
-    id: 102,
-    title: "Time Travel - Version",
-    category: "Delta Lake",
-    description: "Query a previous version of a Delta table. Replace ___ with the correct code.",
-    setup: `
+  id: 102,
+  title: "Time Travel - Version",
+  category: "Delta Lake",
+  difficulty: "beginner",
+  description: "Query a previous version of a Delta table. Replace ___ with the correct code.",
+
+  setup: `
 _reset_delta_tables()
 
 # Create initial data (version 0)
@@ -21,7 +24,8 @@ data_v1 = [("Alice", 150), ("Bob", 250), ("Charlie", 300)]
 df_v1 = spark.createDataFrame(data_v1, ["name", "balance"])
 df_v1.write.format("delta").mode("overwrite").save("/data/accounts")
 `,
-    template: `# Read the current version
+
+  template: `# Read the current version
 current = spark.read.format("delta").load("/data/accounts")
 assert current.count() == 3, "Current version should have 3 rows"
 print(f"✓ Current version has {current.count()} rows")
@@ -38,12 +42,18 @@ assert "Charlie" not in names_v0, "Charlie should not be in version 0"
 print("✓ Charlie correctly absent from version 0")
 
 print("\\n🎉 Koan complete! You've mastered time travel queries.")`,
-    solution: `historical = spark.read.format("delta").option("versionAsOf", 0).load("/data/accounts")`,
-    hints: [
-      "Use .option() to specify time travel parameters",
-      "The option for version-based travel is 'versionAsOf'",
-      "Version numbers start at 0"
-    ]
-  };
+
+  solution: `historical = spark.read.format("delta").option("versionAsOf", 0).load("/data/accounts")`,
+
+  hints: [
+    "Use .option() to specify time travel parameters",
+    "The option for version-based travel is 'versionAsOf'",
+    "Version numbers start at 0"
+  ],
+
+  examCoverage: ["DEA", "DEP"],
+  prerequisiteKoans: [101],
+  nextKoans: [103],
+};
 
 export default koan;
