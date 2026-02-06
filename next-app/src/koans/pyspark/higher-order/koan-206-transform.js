@@ -4,7 +4,7 @@
  */
 
 const koan = {
-  id: 36,
+  id: 206,
   title: "Higher-Order Function: transform",
   category: "Higher-Order Functions",
   difficulty: "advanced",

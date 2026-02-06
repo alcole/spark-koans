@@ -4,7 +4,7 @@
  */
 
 const koan = {
-  id: 46,
+  id: 216,
   title: "mapInPandas - Row-wise Processing",
   category: "Pandas Integration",
   difficulty: "advanced",

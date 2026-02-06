@@ -4,7 +4,7 @@
  */
 
 const koan = {
-  id: 40,
+  id: 210,
   title: "assertDataFrameEqual Advanced Options",
   category: "Testing",
   difficulty: "advanced",

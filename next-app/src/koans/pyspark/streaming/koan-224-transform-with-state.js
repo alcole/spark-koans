@@ -4,7 +4,7 @@
  */
 
 const koan = {
-  id: 54,
+  id: 224,
   title: "transformWithStateInPandas",
   category: "Structured Streaming",
   difficulty: "advanced",

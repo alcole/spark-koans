@@ -151,6 +151,74 @@ export function getKoanStats() {
   };
 }
 
+/**
+ * Track definitions
+ * Standard: IDs 1-99 (PySpark basics) + 101-199 (Delta Lake)
+ * Advanced: IDs 200+ (advanced topics)
+ */
+export const TRACKS = {
+  standard: {
+    name: 'PySpark Fundamentals',
+    description: 'Master the core PySpark and Delta Lake APIs',
+    badge: '/assets/badges/pyspark-fundamentals.png',
+    badgePage: '/badge',
+    startKoan: 1,
+    filter: (id) => id < 200,
+  },
+  advanced: {
+    name: 'PySpark Advanced',
+    description: 'Complex types, testing, pandas integration, and streaming',
+    badge: '/assets/badges/pyspark-advanced.png',
+    badgePage: '/badge/advanced',
+    startKoan: 201,
+    filter: (id) => id >= 200,
+  },
+};
+
+/**
+ * Get the track for a given koan ID
+ */
+export function getTrackForKoan(id) {
+  const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+  if (numId >= 200) return 'advanced';
+  return 'standard';
+}
+
+/**
+ * Get all koan IDs for a specific track
+ */
+export function getKoanIdsByTrack(track) {
+  const trackDef = TRACKS[track];
+  if (!trackDef) return getAllKoanIds();
+  return getAllKoanIds().filter(trackDef.filter);
+}
+
+/**
+ * Get categories for a specific track
+ */
+export function getCategoriesByTrack(track) {
+  const ids = new Set(getKoanIdsByTrack(track));
+  const trackKoans = Object.values(koansById).filter(k => ids.has(k.id));
+  const categories = [...new Set(trackKoans.map(k => k.category))];
+
+  return getAllCategories().filter(c => categories.includes(c));
+}
+
+/**
+ * Get koan stats for a specific track
+ */
+export function getTrackStats(track) {
+  const ids = new Set(getKoanIdsByTrack(track));
+  const koans = Object.values(koansById).filter(k => ids.has(k.id));
+  return {
+    total: koans.length,
+    byCategory: koans.reduce((acc, koan) => {
+      acc[koan.category] = (acc[koan.category] || 0) + 1;
+      return acc;
+    }, {}),
+  };
+}
+
 export default koansById;
 `;
 

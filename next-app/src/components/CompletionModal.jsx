@@ -1,10 +1,10 @@
 /**
- * Completion Modal - Shows when all koans are completed
+ * Completion Modal - Shows when all koans in a track are completed
  */
 
 import Link from 'next/link';
 
-export default function CompletionModal({ isOpen, onClose, totalKoans }) {
+export default function CompletionModal({ isOpen, onClose, totalKoans, badgePage = '/badge', trackName = 'PySpark Koans' }) {
   if (!isOpen) return null;
 
   return (
@@ -16,15 +16,15 @@ export default function CompletionModal({ isOpen, onClose, totalKoans }) {
             Congratulations!
           </h2>
           <p className="text-gray-300 mb-2">
-            You&apos;ve completed all {totalKoans} PySpark Koans!
+            You&apos;ve completed all {totalKoans} {trackName} koans!
           </p>
           <p className="text-gray-400 mb-6">
-            You&apos;ve mastered PySpark fundamentals and Delta Lake operations.
+            Claim your achievement badge and share it with the world.
           </p>
 
           <div className="space-y-3">
             <Link
-              href="/badge"
+              href={badgePage}
               className="block w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
             >
               View Your Achievement Badge 🎓

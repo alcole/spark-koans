@@ -4,7 +4,7 @@
  */
 
 const koan = {
-  id: 32,
+  id: 202,
   title: "Map Types",
   category: "Complex Types",
   difficulty: "advanced",

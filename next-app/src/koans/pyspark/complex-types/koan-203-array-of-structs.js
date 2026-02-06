@@ -4,7 +4,7 @@
  */
 
 const koan = {
-  id: 33,
+  id: 203,
   title: "Arrays of Structs",
   category: "Complex Types",
   difficulty: "advanced",

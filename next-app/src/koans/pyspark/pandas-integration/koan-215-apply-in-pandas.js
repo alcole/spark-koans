@@ -4,7 +4,7 @@
  */
 
 const koan = {
-  id: 45,
+  id: 215,
   title: "applyInPandas - Grouped Map",
   category: "Pandas Integration",
   difficulty: "advanced",

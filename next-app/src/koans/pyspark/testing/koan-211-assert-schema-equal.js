@@ -4,7 +4,7 @@
  */
 
 const koan = {
-  id: 41,
+  id: 211,
   title: "assertSchemaEqual",
   category: "Testing",
   difficulty: "advanced",

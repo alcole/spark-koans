@@ -4,7 +4,7 @@
  */
 
 const koan = {
-  id: 42,
+  id: 212,
   title: "Testing Patterns",
   category: "Testing",
   difficulty: "advanced",

@@ -4,7 +4,7 @@
  */
 
 const koan = {
-  id: 44,
+  id: 214,
   title: "Pandas UDFs - Scalar",
   category: "Pandas Integration",
   difficulty: "advanced",

@@ -4,7 +4,7 @@
  */
 
 const koan = {
-  id: 35,
+  id: 205,
   title: "Schema Enforcement and Inspection",
   category: "Schemas",
   difficulty: "advanced",

@@ -4,7 +4,7 @@
  */
 
 const koan = {
-  id: 34,
+  id: 204,
   title: "Defining Schemas with StructType",
   category: "Schemas",
   difficulty: "advanced",

@@ -4,8 +4,12 @@
 
 import Head from 'next/head';
 import Link from 'next/link';
+import { TRACKS, getTrackStats } from '../src/koans';
 
 export default function Home() {
+  const standardStats = getTrackStats('standard');
+  const advancedStats = getTrackStats('advanced');
+
   return (
     <>
       <Head>
@@ -63,38 +67,79 @@ export default function Home() {
       `}</style>
 
       <div className="bg-gray-950 text-gray-100 min-h-screen flex items-center justify-center p-6">
-        <div className="max-w-4xl w-full text-center">
-          {/* Badge Image */}
-          <div className="flex justify-center mb-8 animate-fadeIn">
-            <div className="animate-pulse-glow rounded-full p-4">
-              <img
-                src="/assets/badges/pyspark-fundamentals.png"
-                alt="PySpark Koans Badge"
-                className="w-64 h-auto drop-shadow-2xl"
-              />
-            </div>
-          </div>
-
+        <div className="max-w-5xl w-full text-center">
           {/* Main Heading */}
-          <h1 className="text-6xl md:text-7xl font-bold text-orange-500 mb-6 animate-fadeIn delay-200">
+          <h1 className="text-6xl md:text-7xl font-bold text-orange-500 mb-6 animate-fadeIn">
             PySpark Koans
           </h1>
 
           {/* Subheading */}
-          <p className="text-2xl md:text-3xl text-gray-300 mb-4 animate-fadeIn delay-400">
+          <p className="text-2xl md:text-3xl text-gray-300 mb-4 animate-fadeIn delay-200">
             Master PySpark Through Practice
           </p>
 
           {/* Description */}
-          <p className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto animate-fadeIn delay-600">
+          <p className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto animate-fadeIn delay-400">
             Interactive exercises to learn PySpark and Delta Lake.
-            Complete koans, earn achievement badges, and become a data engineering expert.
+            Choose a learning track, complete koans, and earn achievement badges.
           </p>
 
-          {/* Start Learning Button */}
-          <div className="mb-8 animate-fadeIn delay-800">
-            <Link href="/koans/1" className="inline-block bg-orange-600 hover:bg-orange-500 text-white px-8 py-4 rounded-lg text-xl font-semibold transition-colors">
-              Start Learning
+          {/* Track Selection */}
+          <div className="grid md:grid-cols-2 gap-8 mb-12 animate-fadeIn delay-600">
+            {/* Standard Track */}
+            <Link href="/koans/1" className="group block bg-gray-900 border-2 border-gray-800 rounded-xl p-8 hover:border-orange-500 transition-all hover:shadow-lg hover:shadow-orange-500/10">
+              <div className="flex justify-center mb-6">
+                <div className="group-hover:animate-pulse-glow rounded-full p-2">
+                  <img
+                    src={TRACKS.standard.badge}
+                    alt="PySpark Fundamentals Badge"
+                    className="w-40 h-auto drop-shadow-xl"
+                  />
+                </div>
+              </div>
+              <h2 className="text-2xl font-bold text-orange-400 mb-2">{TRACKS.standard.name}</h2>
+              <p className="text-gray-400 mb-4">{TRACKS.standard.description}</p>
+              <div className="text-sm text-gray-500 mb-4">
+                {standardStats.total} koans &middot; {Object.keys(standardStats.byCategory).length} categories
+              </div>
+              <div className="flex flex-wrap justify-center gap-2 mb-6">
+                {Object.keys(standardStats.byCategory).map(cat => (
+                  <span key={cat} className="text-xs bg-gray-800 text-gray-400 px-2 py-1 rounded">
+                    {cat}
+                  </span>
+                ))}
+              </div>
+              <span className="inline-block bg-orange-600 group-hover:bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                Start Fundamentals
+              </span>
+            </Link>
+
+            {/* Advanced Track */}
+            <Link href="/koans/201" className="group block bg-gray-900 border-2 border-gray-800 rounded-xl p-8 hover:border-purple-500 transition-all hover:shadow-lg hover:shadow-purple-500/10">
+              <div className="flex justify-center mb-6">
+                <div className="rounded-full p-2">
+                  <img
+                    src={TRACKS.advanced.badge}
+                    alt="PySpark Advanced Badge"
+                    className="w-40 h-auto drop-shadow-xl"
+                  />
+                </div>
+              </div>
+              <h2 className="text-2xl font-bold text-purple-400 mb-2">{TRACKS.advanced.name}</h2>
+              <p className="text-gray-400 mb-4">{TRACKS.advanced.description}</p>
+              <div className="text-sm text-gray-500 mb-4">
+                {advancedStats.total} koans &middot; {Object.keys(advancedStats.byCategory).length} categories
+              </div>
+              <div className="flex flex-wrap justify-center gap-2 mb-6">
+                {Object.keys(advancedStats.byCategory).map(cat => (
+                  <span key={cat} className="text-xs bg-gray-800 text-gray-400 px-2 py-1 rounded">
+                    {cat}
+                  </span>
+                ))}
+              </div>
+              <span className="inline-block bg-purple-600 group-hover:bg-purple-500 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                Start Advanced
+              </span>
             </Link>
           </div>
 
@@ -114,35 +159,9 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Features Grid */}
-          <div className="grid md:grid-cols-3 gap-8 mt-16 animate-fadeIn delay-800">
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-orange-500 transition-colors">
-              <div className="text-4xl mb-4">🎯</div>
-              <h3 className="text-xl font-semibold mb-2 text-orange-400">Interactive Learning</h3>
-              <p className="text-gray-400">Hands-on exercises that teach by doing</p>
-            </div>
-
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-orange-500 transition-colors">
-              <div className="text-4xl mb-4">🏆</div>
-              <h3 className="text-xl font-semibold mb-2 text-orange-400">Achievement Badges</h3>
-              <p className="text-gray-400">Earn badges as you complete tracks</p>
-            </div>
-
-            <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-orange-500 transition-colors">
-              <div className="text-4xl mb-4">📊</div>
-              <h3 className="text-xl font-semibold mb-2 text-orange-400">Track Your Progress</h3>
-              <p className="text-gray-400">Multiple learning paths for all levels</p>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="mt-16 text-gray-500 text-sm">
-            <p>40 interactive exercises covering PySpark and Delta Lake</p>
-          </div>
-
           {/* Copyright Notice */}
           <footer className="mt-8 py-6 border-t border-gray-800 text-center text-xs text-gray-500">
-            <p>© 2025-2026 Alex Cole. All Rights Reserved.</p>
+            <p>&copy; 2025-2026 Alex Cole. All Rights Reserved.</p>
             <p className="mt-1">Spark Koans is an independent community learning tool.</p>
           </footer>
         </div>

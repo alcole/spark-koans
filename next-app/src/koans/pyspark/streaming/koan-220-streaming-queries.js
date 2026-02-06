@@ -4,7 +4,7 @@
  */
 
 const koan = {
-  id: 50,
+  id: 220,
   title: "Streaming Queries",
   category: "Structured Streaming",
   difficulty: "advanced",

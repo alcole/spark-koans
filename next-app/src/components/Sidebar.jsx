@@ -4,15 +4,21 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { getAllKoanIds, getKoan, getAllCategories, getKoansByCategory } from '../koans';
+import { getAllKoanIds, getKoan, getAllCategories, getKoansByCategory, getTrackForKoan, getKoanIdsByTrack, getCategoriesByTrack, TRACKS } from '../koans';
 
 export default function Sidebar({ currentKoanId, progress, onKoanSelect }) {
-  const koanIds = getAllKoanIds();
-  const categories = getAllCategories();
+  const track = getTrackForKoan(currentKoanId);
+  const trackDef = TRACKS[track];
+  const koanIds = getKoanIdsByTrack(track);
+  const categories = getCategoriesByTrack(track);
+  const trackProgress = koanIds.filter(id => progress.has(id)).length;
   const [expandedCategories, setExpandedCategories] = useState(
     // All categories expanded by default
     Object.fromEntries(categories.map(cat => [cat, true]))
   );
+
+  const isAdvanced = track === 'advanced';
+  const accentColor = isAdvanced ? 'purple' : 'orange';
 
   const toggleCategory = (category) => {
     setExpandedCategories(prev => ({
@@ -25,20 +31,46 @@ export default function Sidebar({ currentKoanId, progress, onKoanSelect }) {
     <div className="w-72 h-screen bg-gray-900 border-r border-gray-800 p-4 overflow-y-auto flex flex-col">
       <div className="mb-6">
         <Link href="/" className="block hover:opacity-80 transition-opacity">
-          <h1 className="text-2xl font-bold text-orange-500 mb-1 cursor-pointer">PySpark Koans</h1>
+          <h1 className={`text-2xl font-bold mb-1 cursor-pointer ${isAdvanced ? 'text-purple-500' : 'text-orange-500'}`}>PySpark Koans</h1>
         </Link>
-        <p className="text-gray-500 text-sm">Learn by fixing tests</p>
+        <p className={`text-sm font-medium ${isAdvanced ? 'text-purple-400' : 'text-orange-400'}`}>
+          {trackDef.name}
+        </p>
+      </div>
+
+      {/* Track Switcher */}
+      <div className="mb-4 flex gap-2">
+        <button
+          onClick={() => onKoanSelect(TRACKS.standard.startKoan)}
+          className={`flex-1 text-xs py-1.5 rounded-lg transition-colors ${
+            !isAdvanced
+              ? 'bg-orange-600 text-white'
+              : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+          }`}
+        >
+          Fundamentals
+        </button>
+        <button
+          onClick={() => onKoanSelect(TRACKS.advanced.startKoan)}
+          className={`flex-1 text-xs py-1.5 rounded-lg transition-colors ${
+            isAdvanced
+              ? 'bg-purple-600 text-white'
+              : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+          }`}
+        >
+          Advanced
+        </button>
       </div>
 
       <div className="mb-4">
         <div className="flex justify-between text-sm text-gray-500 mb-1">
           <span>Progress</span>
-          <span>{progress.size || 0}/{koanIds.length}</span>
+          <span>{trackProgress}/{koanIds.length}</span>
         </div>
         <div className="w-full bg-gray-800 rounded-full h-2">
           <div
-            className="bg-orange-600 h-2 rounded-full transition-all"
-            style={{ width: `${((progress.size || 0) / koanIds.length) * 100}%` }}
+            className={`h-2 rounded-full transition-all ${isAdvanced ? 'bg-purple-600' : 'bg-orange-600'}`}
+            style={{ width: `${(trackProgress / koanIds.length) * 100}%` }}
           />
         </div>
       </div>
@@ -114,7 +146,7 @@ export default function Sidebar({ currentKoanId, progress, onKoanSelect }) {
 
       {/* Copyright Notice */}
       <div className="mt-auto pt-4 border-t border-gray-800 text-sm text-gray-500 text-center">
-        <p>© 2025-2026 Alex Cole. All Rights Reserved.</p>
+        <p>&copy; 2025-2026 Alex Cole. All Rights Reserved.</p>
         <p className="mt-1">Spark Koans is an independent community tool.</p>
       </div>
     </div>
