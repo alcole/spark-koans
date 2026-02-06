@@ -1,22 +1,22 @@
 /**
- * Achievement Badge Page - Shown when all koans are completed
- * Badge design with static OG image for social sharing
+ * Advanced Achievement Badge Page
  */
 
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { getKoanStats } from '../src/koans';
-import useKoanProgress from '../src/hooks/useKoanProgress';
+import { getTrackStats, getKoanIdsByTrack, TRACKS } from '../../src/koans';
+import useKoanProgress from '../../src/hooks/useKoanProgress';
 
-export default function Certificate() {
-  const stats = getKoanStats();
+export default function AdvancedBadge() {
+  const trackIds = getKoanIdsByTrack('advanced');
+  const trackStats = getTrackStats('advanced');
   const { progress } = useKoanProgress();
+  const trackProgress = trackIds.filter(id => progress.has(id)).length;
   const [isDownloading, setIsDownloading] = useState(false);
   const [completionDate, setCompletionDate] = useState('');
 
   useEffect(() => {
-    // Set completion date
     const today = new Date().toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -25,22 +25,19 @@ export default function Certificate() {
     setCompletionDate(today);
   }, []);
 
-  const isFullyComplete = progress.size === stats.total;
+  const isFullyComplete = trackProgress === trackIds.length;
 
-  const shareText = `🎉 I just completed all ${stats.total} PySpark Koans! Master your PySpark skills through interactive exercises. #PySpark #DataEngineering #Learning`;
+  const shareText = `🎉 I just completed all ${trackIds.length} PySpark Advanced Koans! Complex types, testing, pandas integration, and streaming. #PySpark #DataEngineering #Learning`;
   const shareUrl = typeof window !== 'undefined' ? window.location.origin : 'https://spark-koans.com';
 
-  // Dynamic OG image URL for badge
-  const ogImageUrl = `${shareUrl}/api/og-badge`;
-
   const shareOnTwitter = () => {
-    const badgeUrl = `${shareUrl}/badge`;
+    const badgeUrl = `${shareUrl}/badge/advanced`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(badgeUrl)}`;
     window.open(url, '_blank', 'width=550,height=420');
   };
 
   const shareOnLinkedIn = () => {
-    const badgeUrl = `${shareUrl}/badge`;
+    const badgeUrl = `${shareUrl}/badge/advanced`;
     const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(badgeUrl)}`;
     window.open(url, '_blank', 'width=550,height=500');
   };
@@ -58,11 +55,10 @@ export default function Certificate() {
 
       const sourceCanvas = await html2canvas(badge, {
         backgroundColor: '#111827',
-        scale: 2, // Higher quality capture
+        scale: 2,
         logging: false,
       });
 
-      // Resize to 400x480 for standard badge size
       const outputWidth = 400;
       const outputHeight = 480;
       const outputCanvas = document.createElement('canvas');
@@ -70,18 +66,14 @@ export default function Certificate() {
       outputCanvas.height = outputHeight;
       const ctx = outputCanvas.getContext('2d');
 
-      // Fill background
       ctx.fillStyle = '#111827';
       ctx.fillRect(0, 0, outputWidth, outputHeight);
-
-      // Draw scaled badge
       ctx.drawImage(sourceCanvas, 0, 0, outputWidth, outputHeight);
 
-      // Convert to blob and download
       outputCanvas.toBlob((blob) => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
-        link.download = `pyspark-koans-achievement-badge.png`;
+        link.download = `pyspark-koans-advanced-badge.png`;
         link.href = url;
         link.click();
         URL.revokeObjectURL(url);
@@ -97,44 +89,36 @@ export default function Certificate() {
   return (
     <>
       <Head>
-        <title>PySpark Koans Achievement Badge</title>
-        <meta name="description" content={`Completed all ${stats.total} PySpark Koans - Master PySpark through interactive exercises`} />
-
-        {/* Open Graph meta tags for social sharing */}
-        <meta property="og:title" content="Completed all PySpark Koans!" />
-        <meta property="og:description" content={`Successfully completed all ${stats.total} PySpark and Delta Lake exercises. Master your data engineering skills!`} />
+        <title>PySpark Advanced Achievement Badge</title>
+        <meta name="description" content={`Completed all ${trackIds.length} PySpark Advanced Koans`} />
+        <meta property="og:title" content="Completed PySpark Advanced Koans!" />
+        <meta property="og:description" content={`Successfully completed all ${trackIds.length} PySpark Advanced exercises.`} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={`${shareUrl}/badge`} />
-        <meta property="og:image" content={ogImageUrl} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-
-        {/* Twitter Card meta tags */}
+        <meta property="og:url" content={`${shareUrl}/badge/advanced`} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Completed all PySpark Koans!" />
-        <meta name="twitter:description" content={`Successfully completed all ${stats.total} PySpark and Delta Lake exercises.`} />
-        <meta name="twitter:image" content={ogImageUrl} />
-        <link rel="canonical" href="https://spark-koans.com/badge" />
+        <meta name="twitter:title" content="Completed PySpark Advanced Koans!" />
+        <meta name="twitter:description" content={`Successfully completed all ${trackIds.length} PySpark Advanced exercises.`} />
+        <link rel="canonical" href="https://spark-koans.com/badge/advanced" />
       </Head>
 
       <div className="min-h-screen bg-gray-950 text-gray-100 py-12 px-4">
         <div className="max-w-4xl mx-auto">
-          <Link href="/" className="text-orange-500 hover:text-orange-400 mb-8 inline-block">
-            ← Back to Home
+          <Link href="/" className="text-purple-500 hover:text-purple-400 mb-8 inline-block">
+            &larr; Back to Home
           </Link>
 
         {!isFullyComplete ? (
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-12 text-center">
             <h1 className="text-3xl font-bold mb-4">Keep Going!</h1>
             <p className="text-gray-400 mb-4">
-              You&apos;ve completed {progress.size} out of {stats.total} koans.
+              You&apos;ve completed {trackProgress} out of {trackIds.length} Advanced koans.
             </p>
             <p className="text-gray-400 mb-8">
-              Complete all koans to earn your achievement badge!
+              Complete all Advanced koans to earn your achievement badge!
             </p>
             <Link
-              href="/koans/1"
-              className="inline-block bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg transition-colors"
+              href="/koans/201"
+              className="inline-block bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg transition-colors"
             >
               Continue Learning
             </Link>
@@ -148,8 +132,8 @@ export default function Certificate() {
                 className="max-w-md"
               >
                 <img
-                  src="/assets/badge.png"
-                  alt="PySpark Koans Master Badge"
+                  src="/assets/badges/pyspark-advanced.png"
+                  alt="PySpark Advanced Badge"
                   className="w-full h-auto drop-shadow-2xl"
                 />
                 <p className="text-gray-400 text-center mt-6">
@@ -165,12 +149,11 @@ export default function Certificate() {
                 Download your badge or share on social media
               </p>
 
-              {/* Download Button */}
               <div className="mb-6">
                 <button
                   onClick={downloadBadge}
                   disabled={isDownloading}
-                  className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
+                  className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
                 >
                   {isDownloading ? (
                     <>
@@ -194,7 +177,6 @@ export default function Certificate() {
                 </p>
               </div>
 
-              {/* Share Buttons */}
               <p className="text-sm text-gray-500 mb-4">Or share directly:</p>
               <div className="flex flex-wrap justify-center gap-4">
                 <button

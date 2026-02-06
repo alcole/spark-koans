@@ -46,6 +46,30 @@ import koan107 from './delta/koan-107-delete-with-condition';
 import koan108 from './delta/koan-108-update-with-condition';
 import koan109 from './delta/koan-109-create-table-with-builder';
 import koan110 from './delta/koan-110-vacuum-old-files';
+import koan201 from './pyspark/complex-types/koan-201-nested-structs';
+import koan202 from './pyspark/complex-types/koan-202-map-types';
+import koan203 from './pyspark/complex-types/koan-203-array-of-structs';
+import koan204 from './pyspark/schemas/koan-204-defining-schemas';
+import koan205 from './pyspark/schemas/koan-205-schema-enforcement';
+import koan206 from './pyspark/higher-order/koan-206-transform';
+import koan207 from './pyspark/higher-order/koan-207-filter-arrays';
+import koan208 from './pyspark/higher-order/koan-208-aggregate-arrays';
+import koan209 from './pyspark/testing/koan-209-assert-dataframe-equal';
+import koan210 from './pyspark/testing/koan-210-assert-dataframe-advanced';
+import koan211 from './pyspark/testing/koan-211-assert-schema-equal';
+import koan212 from './pyspark/testing/koan-212-testing-patterns';
+import koan213 from './pyspark/pandas-integration/koan-213-topandas-and-back';
+import koan214 from './pyspark/pandas-integration/koan-214-pandas-udf-scalar';
+import koan215 from './pyspark/pandas-integration/koan-215-apply-in-pandas';
+import koan216 from './pyspark/pandas-integration/koan-216-map-in-pandas';
+import koan217 from './pyspark/streaming/koan-217-rate-source';
+import koan218 from './pyspark/streaming/koan-218-datastreamreader';
+import koan219 from './pyspark/streaming/koan-219-streaming-transformations';
+import koan220 from './pyspark/streaming/koan-220-streaming-queries';
+import koan221 from './pyspark/streaming/koan-221-stream-triggers';
+import koan222 from './pyspark/streaming/koan-222-monitoring-streams';
+import koan223 from './pyspark/streaming/koan-223-sliding-windows';
+import koan224 from './pyspark/streaming/koan-224-transform-with-state';
 
 /**
  * All koans indexed by ID
@@ -90,6 +114,30 @@ const koansById = {
   108: koan108,
   109: koan109,
   110: koan110,
+  201: koan201,
+  202: koan202,
+  203: koan203,
+  204: koan204,
+  205: koan205,
+  206: koan206,
+  207: koan207,
+  208: koan208,
+  209: koan209,
+  210: koan210,
+  211: koan211,
+  212: koan212,
+  213: koan213,
+  214: koan214,
+  215: koan215,
+  216: koan216,
+  217: koan217,
+  218: koan218,
+  219: koan219,
+  220: koan220,
+  221: koan221,
+  222: koan222,
+  223: koan223,
+  224: koan224,
 };
 
 /**
@@ -129,6 +177,12 @@ export function getAllCategories() {
     'Window Functions',
     'Null Handling',
     'Advanced',
+    'Complex Types',
+    'Schemas',
+    'Higher-Order Functions',
+    'Testing',
+    'Pandas Integration',
+    'Structured Streaming',
     'Delta Lake'
   ];
 
@@ -166,6 +220,74 @@ export function getKoanStats() {
     }, {}),
     byDifficulty: koans.reduce((acc, koan) => {
       acc[koan.difficulty] = (acc[koan.difficulty] || 0) + 1;
+      return acc;
+    }, {}),
+  };
+}
+
+/**
+ * Track definitions
+ * Standard: IDs 1-99 (PySpark basics) + 101-199 (Delta Lake)
+ * Advanced: IDs 200+ (advanced topics)
+ */
+export const TRACKS = {
+  standard: {
+    name: 'PySpark Fundamentals',
+    description: 'Master the core PySpark and Delta Lake APIs',
+    badge: '/assets/badges/pyspark-fundamentals.png',
+    badgePage: '/badge',
+    startKoan: 1,
+    filter: (id) => id < 200,
+  },
+  advanced: {
+    name: 'PySpark Advanced',
+    description: 'Complex types, testing, pandas integration, and streaming',
+    badge: '/assets/badges/pyspark-advanced.png',
+    badgePage: '/badge/advanced',
+    startKoan: 201,
+    filter: (id) => id >= 200,
+  },
+};
+
+/**
+ * Get the track for a given koan ID
+ */
+export function getTrackForKoan(id) {
+  const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+  if (numId >= 200) return 'advanced';
+  return 'standard';
+}
+
+/**
+ * Get all koan IDs for a specific track
+ */
+export function getKoanIdsByTrack(track) {
+  const trackDef = TRACKS[track];
+  if (!trackDef) return getAllKoanIds();
+  return getAllKoanIds().filter(trackDef.filter);
+}
+
+/**
+ * Get categories for a specific track
+ */
+export function getCategoriesByTrack(track) {
+  const ids = new Set(getKoanIdsByTrack(track));
+  const trackKoans = Object.values(koansById).filter(k => ids.has(k.id));
+  const categories = [...new Set(trackKoans.map(k => k.category))];
+
+  return getAllCategories().filter(c => categories.includes(c));
+}
+
+/**
+ * Get koan stats for a specific track
+ */
+export function getTrackStats(track) {
+  const ids = new Set(getKoanIdsByTrack(track));
+  const koans = Object.values(koansById).filter(k => ids.has(k.id));
+  return {
+    total: koans.length,
+    byCategory: koans.reduce((acc, koan) => {
+      acc[koan.category] = (acc[koan.category] || 0) + 1;
       return acc;
     }, {}),
   };

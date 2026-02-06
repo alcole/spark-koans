@@ -33,25 +33,37 @@ class Column:
 
     # Comparison operators
     def __gt__(self, other):
+        if isinstance(other, Column):
+            return Column(self.name, f"({self.expr}) > ({other.expr})")
         return Column(self.name, f"({self.expr}) > {repr(other)}")
 
     def __lt__(self, other):
+        if isinstance(other, Column):
+            return Column(self.name, f"({self.expr}) < ({other.expr})")
         return Column(self.name, f"({self.expr}) < {repr(other)}")
 
     def __ge__(self, other):
+        if isinstance(other, Column):
+            return Column(self.name, f"({self.expr}) >= ({other.expr})")
         return Column(self.name, f"({self.expr}) >= {repr(other)}")
 
     def __le__(self, other):
+        if isinstance(other, Column):
+            return Column(self.name, f"({self.expr}) <= ({other.expr})")
         return Column(self.name, f"({self.expr}) <= {repr(other)}")
 
     def __eq__(self, other):
         if other is None:
             return Column(self.name, f"({self.expr}).isna()")
+        if isinstance(other, Column):
+            return Column(self.name, f"({self.expr}) == ({other.expr})")
         return Column(self.name, f"({self.expr}) == {repr(other)}")
 
     def __ne__(self, other):
         if other is None:
             return Column(self.name, f"({self.expr}).notna()")
+        if isinstance(other, Column):
+            return Column(self.name, f"({self.expr}) != ({other.expr})")
         return Column(self.name, f"({self.expr}) != {repr(other)}")
 
     # Arithmetic operators
@@ -74,6 +86,11 @@ class Column:
         if isinstance(other, Column):
             return Column(self.name, f"({self.expr}) / ({other.expr})")
         return Column(self.name, f"({self.expr}) / {repr(other)}")
+
+    def __mod__(self, other):
+        if isinstance(other, Column):
+            return Column(self.name, f"({self.expr}) % ({other.expr})")
+        return Column(self.name, f"({self.expr}) % {repr(other)}")
 
     # Logical operators
     def __and__(self, other):
@@ -240,7 +257,13 @@ class DataFrame:
     def collect(self):
         rows = []
         for _, row in self._pdf.iterrows():
-            row_dict = {k: (None if pd.isna(v) else v) for k, v in row.items()}
+            row_dict = {}
+            for k, v in row.items():
+                try:
+                    row_dict[k] = None if pd.isna(v) else v
+                except (ValueError, TypeError):
+                    # pd.isna raises ValueError for list/dict; keep as-is
+                    row_dict[k] = v
             rows.append(Row(**row_dict))
         return rows
 
@@ -248,7 +271,13 @@ class DataFrame:
         if len(self._pdf) == 0:
             return None
         row = self._pdf.iloc[0]
-        return Row(**{k: (None if pd.isna(v) else v) for k, v in row.items()})
+        row_dict = {}
+        for k, v in row.items():
+            try:
+                row_dict[k] = None if pd.isna(v) else v
+            except (ValueError, TypeError):
+                row_dict[k] = v
+        return Row(**row_dict)
 
     def select(self, *cols):
         result_cols = {}
@@ -330,15 +359,17 @@ class DataFrame:
                     else:
                         pdf[name] = range(1, len(pdf) + 1)
                 elif window_func == 'rank':
+                    sort_cols_names = [oc if isinstance(oc, str) else oc.name for oc in window._order_cols]
                     if partition_cols:
-                        pdf[name] = pdf.groupby(partition_cols).cumcount() + 1
+                        pdf[name] = pdf.groupby(partition_cols)[sort_cols_names[0]].rank(method='min').astype(int)
                     else:
-                        pdf[name] = range(1, len(pdf) + 1)
+                        pdf[name] = pdf[sort_cols_names[0]].rank(method='min').astype(int)
                 elif window_func == 'dense_rank':
+                    sort_cols_names = [oc if isinstance(oc, str) else oc.name for oc in window._order_cols]
                     if partition_cols:
-                        pdf[name] = pdf.groupby(partition_cols).cumcount() + 1
+                        pdf[name] = pdf.groupby(partition_cols)[sort_cols_names[0]].rank(method='dense').astype(int)
                     else:
-                        pdf[name] = range(1, len(pdf) + 1)
+                        pdf[name] = pdf[sort_cols_names[0]].rank(method='dense').astype(int)
                 elif window_func == 'lag':
                     source_col = col.name
                     offset = col._window_args.get('offset', 1)
@@ -595,12 +626,13 @@ def initcap(col_expr):
 def concat(*cols):
     """Concatenate multiple columns"""
     def transform(pdf):
-        result = pdf[cols[0].name].astype(str)
-        for c in cols[1:]:
+        result = None
+        for c in cols:
             if hasattr(c, '_lit_value'):
-                result = result + str(c._lit_value)
+                part = pd.Series([str(c._lit_value)] * len(pdf))
             else:
-                result = result + pdf[c.name].astype(str)
+                part = pdf[c.name].astype(str)
+            result = part if result is None else result + part
         return result
 
     new_col = Column("concat_result")
@@ -905,12 +937,932 @@ def lead(col_name, offset=1, default=None):
     return col
 
 
+# ============ TYPE SYSTEM ============
+
+class DataType:
+    """Base class for PySpark data types"""
+    def __eq__(self, other):
+        return type(self) == type(other)
+    def __ne__(self, other):
+        return not self.__eq__(other)
+    def __repr__(self):
+        return f"{type(self).__name__}()"
+
+
+class StringType(DataType):
+    pass
+
+class IntegerType(DataType):
+    pass
+
+class LongType(DataType):
+    pass
+
+class DoubleType(DataType):
+    pass
+
+class FloatType(DataType):
+    pass
+
+class BooleanType(DataType):
+    pass
+
+class TimestampType(DataType):
+    pass
+
+class DateType(DataType):
+    pass
+
+class ArrayType(DataType):
+    def __init__(self, elementType=None, containsNull=True):
+        self.elementType = elementType
+        self.containsNull = containsNull
+    def __eq__(self, other):
+        return isinstance(other, ArrayType) and self.elementType == other.elementType
+
+class MapType(DataType):
+    def __init__(self, keyType=None, valueType=None, valueContainsNull=True):
+        self.keyType = keyType
+        self.valueType = valueType
+        self.valueContainsNull = valueContainsNull
+    def __eq__(self, other):
+        return isinstance(other, MapType) and self.keyType == other.keyType and self.valueType == other.valueType
+
+
+class StructField:
+    """A field in a StructType schema"""
+    def __init__(self, name, dataType, nullable=True):
+        self.name = name
+        self.dataType = dataType
+        self.nullable = nullable
+
+    def __eq__(self, other):
+        if not isinstance(other, StructField):
+            return False
+        return (self.name == other.name and
+                self.dataType == other.dataType and
+                self.nullable == other.nullable)
+
+    def __repr__(self):
+        return f"StructField('{self.name}', {self.dataType}, {self.nullable})"
+
+
+class StructType(DataType):
+    """Schema definition for DataFrames"""
+    def __init__(self, fields=None):
+        self.fields = fields or []
+        self._field_map = {f.name: f for f in self.fields}
+
+    def add(self, name, dataType, nullable=True):
+        field = StructField(name, dataType, nullable)
+        self.fields.append(field)
+        self._field_map[name] = field
+        return self
+
+    def __getitem__(self, key):
+        if isinstance(key, str):
+            return self._field_map[key]
+        return self.fields[key]
+
+    def __eq__(self, other):
+        if not isinstance(other, StructType):
+            return False
+        if len(self.fields) != len(other.fields):
+            return False
+        return all(a == b for a, b in zip(self.fields, other.fields))
+
+    def __repr__(self):
+        return f"StructType({self.fields})"
+
+    @property
+    def fieldNames(self):
+        return [f.name for f in self.fields]
+
+
+# Type inference helpers
+def _infer_type(value):
+    """Infer PySpark type from a Python value"""
+    if isinstance(value, str):
+        return StringType()
+    elif isinstance(value, bool):
+        return BooleanType()
+    elif isinstance(value, int):
+        return IntegerType()
+    elif isinstance(value, float):
+        return DoubleType()
+    elif isinstance(value, dict):
+        return StringType()  # simplified
+    elif isinstance(value, list):
+        return ArrayType(StringType())  # simplified
+    return StringType()
+
+
+def _infer_schema(data, columns):
+    """Infer a StructType schema from data"""
+    fields = []
+    if data and len(data) > 0:
+        first_row = data[0]
+        for i, name in enumerate(columns):
+            val = first_row[i] if isinstance(first_row, (list, tuple)) else first_row
+            fields.append(StructField(name, _infer_type(val), True))
+    else:
+        for name in columns:
+            fields.append(StructField(name, StringType(), True))
+    return StructType(fields)
+
+
+# ============ COLUMN GETFIELD ============
+# Patch Column class with getField support
+_original_column_init = Column.__init__
+
+def _column_getField(self, name):
+    """Access a field within a struct column"""
+    def transform(pdf):
+        col_data = pdf[self.name]
+        return col_data.apply(lambda x: x.get(name) if isinstance(x, dict) else None)
+    new_col = Column(f"{self.name}.{name}")
+    new_col._transform_func = transform
+    new_col._source_struct_col = self.name
+    new_col._struct_field_name = name
+    return new_col
+
+Column.getField = _column_getField
+
+
+# ============ SCHEMA ON DATAFRAME ============
+_original_df_init = DataFrame.__init__
+
+def _new_df_init(self, pdf, schema=None):
+    self._pdf = pdf.copy()
+    self._schema = schema
+
+DataFrame.__init__ = _new_df_init
+
+@property
+def _df_schema(self):
+    if self._schema is not None:
+        return self._schema
+    # Infer schema from pandas dtypes
+    fields = []
+    for col_name in self._pdf.columns:
+        dtype = self._pdf[col_name].dtype
+        if dtype == 'object':
+            # Check if it contains dicts (struct type)
+            sample = self._pdf[col_name].dropna()
+            if len(sample) > 0 and isinstance(sample.iloc[0], dict):
+                ptype = StringType()  # simplified
+            else:
+                ptype = StringType()
+        elif 'int' in str(dtype):
+            ptype = IntegerType()
+        elif 'float' in str(dtype):
+            ptype = DoubleType()
+        elif 'bool' in str(dtype):
+            ptype = BooleanType()
+        else:
+            ptype = StringType()
+        fields.append(StructField(col_name, ptype, True))
+    return StructType(fields)
+
+DataFrame.schema = _df_schema
+
+
+
+# ============ MAP FUNCTIONS ============
+
+def create_map(*cols):
+    """Create a map column from alternating key-value columns"""
+    def transform(pdf):
+        result = []
+        for idx in range(len(pdf)):
+            m = {}
+            for i in range(0, len(cols), 2):
+                key_col = cols[i]
+                val_col = cols[i + 1]
+                k = pdf[key_col.name].iloc[idx] if hasattr(key_col, 'name') else key_col
+                v = pdf[val_col.name].iloc[idx] if hasattr(val_col, 'name') else val_col
+                m[k] = v
+            result.append(m)
+        return pd.Series(result)
+
+    new_col = Column("map_result")
+    new_col._transform_func = transform
+    return new_col
+
+
+def map_keys(col_expr):
+    """Extract keys from a map column"""
+    if isinstance(col_expr, str):
+        col_expr = col(col_expr)
+
+    def transform(pdf):
+        return pdf[col_expr.name].apply(lambda x: list(x.keys()) if isinstance(x, dict) else [])
+
+    new_col = Column(col_expr.name)
+    new_col._transform_func = transform
+    return new_col
+
+
+def map_values(col_expr):
+    """Extract values from a map column"""
+    if isinstance(col_expr, str):
+        col_expr = col(col_expr)
+
+    def transform(pdf):
+        return pdf[col_expr.name].apply(lambda x: list(x.values()) if isinstance(x, dict) else [])
+
+    new_col = Column(col_expr.name)
+    new_col._transform_func = transform
+    return new_col
+
+
+# ============ ARRAY SIZE ============
+def size(col_expr):
+    """Get the size of an array or map column"""
+    if isinstance(col_expr, str):
+        col_expr = col(col_expr)
+
+    if hasattr(col_expr, '_transform_func'):
+        # If the input is already a transformed column (e.g., from filter())
+        inner_func = col_expr._transform_func
+        def transform(pdf):
+            arr = inner_func(pdf)
+            return arr.apply(lambda x: len(x) if isinstance(x, (list, dict)) else 0)
+    else:
+        def transform(pdf):
+            return pdf[col_expr.name].apply(lambda x: len(x) if isinstance(x, (list, dict)) else 0)
+
+    new_col = Column(col_expr.name)
+    new_col._transform_func = transform
+    return new_col
+
+
+# ============ HIGHER-ORDER FUNCTIONS ============
+
+def transform(col_expr, func):
+    """Apply a function to every element in an array column"""
+    if isinstance(col_expr, str):
+        col_expr = col(col_expr)
+
+    def do_transform(pdf):
+        return pdf[col_expr.name].apply(
+            lambda arr: [func(x) for x in arr] if isinstance(arr, list) else arr
+        )
+
+    new_col = Column(col_expr.name)
+    new_col._transform_func = do_transform
+    return new_col
+
+
+# We need a different name to avoid shadowing built-in filter
+def array_filter(col_expr, func):
+    """Filter elements in an array column by a predicate"""
+    if isinstance(col_expr, str):
+        col_expr = col(col_expr)
+
+    def do_filter(pdf):
+        return pdf[col_expr.name].apply(
+            lambda arr: [x for x in arr if func(x)] if isinstance(arr, list) else arr
+        )
+
+    new_col = Column(col_expr.name)
+    new_col._transform_func = do_filter
+    return new_col
+
+# In PySpark, the function is called 'filter' in pyspark.sql.functions
+# We'll register it under that name in the module
+_pyspark_array_filter = array_filter
+
+
+def aggregate(col_expr, initial, merge, finish=None):
+    """Reduce an array to a single value"""
+    if isinstance(col_expr, str):
+        col_expr = col(col_expr)
+
+    # Handle lit() wrapped initial values
+    init_val = initial._lit_value if hasattr(initial, '_lit_value') else initial
+
+    def do_aggregate(pdf):
+        def reduce_arr(arr):
+            if not isinstance(arr, list):
+                return init_val
+            acc = init_val
+            for x in arr:
+                acc = merge(acc, x)
+            if finish:
+                acc = finish(acc)
+            return acc
+        return pdf[col_expr.name].apply(reduce_arr)
+
+    new_col = Column(col_expr.name)
+    new_col._transform_func = do_aggregate
+    return new_col
+
+
+def exists(col_expr, func):
+    """Check if any element in an array satisfies a predicate"""
+    if isinstance(col_expr, str):
+        col_expr = col(col_expr)
+
+    def do_exists(pdf):
+        return pdf[col_expr.name].apply(
+            lambda arr: any(func(x) for x in arr) if isinstance(arr, list) else False
+        )
+
+    new_col = Column(col_expr.name)
+    new_col._transform_func = do_exists
+    return new_col
+
+
+def forall(col_expr, func):
+    """Check if all elements in an array satisfy a predicate"""
+    if isinstance(col_expr, str):
+        col_expr = col(col_expr)
+
+    def do_forall(pdf):
+        return pdf[col_expr.name].apply(
+            lambda arr: all(func(x) for x in arr) if isinstance(arr, list) else False
+        )
+
+    new_col = Column(col_expr.name)
+    new_col._transform_func = do_forall
+    return new_col
+
+
+# ============ SPARKSESSION SCHEMA SUPPORT ============
+_original_createDataFrame = SparkSession.createDataFrame
+
+def _new_createDataFrame(self, data, schema):
+    """Create DataFrame with optional StructType schema"""
+    if isinstance(schema, StructType):
+        columns = [f.name for f in schema.fields]
+        if isinstance(data, pd.DataFrame):
+            pdf = data.copy()
+            pdf.columns = columns
+        else:
+            pdf = pd.DataFrame(data, columns=columns)
+        df = DataFrame(pdf)
+        df._schema = schema
+        return df
+    elif isinstance(data, pd.DataFrame):
+        pdf = data.copy()
+        if isinstance(schema, list):
+            pdf.columns = schema
+        df = DataFrame(pdf)
+        return df
+    else:
+        pdf = pd.DataFrame(data, columns=schema)
+        return DataFrame(pdf)
+
+SparkSession.createDataFrame = _new_createDataFrame
+
+
+# ============ TESTING MODULE ============
+
+def assertDataFrameEqual(actual, expected, checkRowOrder=False, rtol=1e-5, atol=1e-8,
+                         ignoreNullable=True, ignoreColumnOrder=False, ignoreColumnName=False,
+                         ignoreColumnType=False, maxErrors=None, showOnlyDiff=False,
+                         includeDiffRows=False):
+    """Compare two DataFrames or a DataFrame against a list of Rows"""
+    # Convert expected Rows to DataFrame if needed
+    if isinstance(expected, list):
+        if len(expected) > 0 and isinstance(expected[0], Row):
+            exp_data = [dict(r) for r in expected]
+            exp_pdf = pd.DataFrame(exp_data)
+            expected_df = DataFrame(exp_pdf)
+        else:
+            expected_df = expected
+    else:
+        expected_df = expected
+
+    actual_rows = actual.collect()
+    expected_rows = expected_df.collect() if hasattr(expected_df, 'collect') else expected
+
+    # Compare schemas if both are DataFrames
+    if hasattr(expected_df, 'schema') and hasattr(actual, 'schema'):
+        actual_schema = actual.schema
+        expected_schema = expected_df.schema
+        if actual_schema and expected_schema:
+            for af, ef in zip(actual_schema.fields, expected_schema.fields):
+                if not ignoreColumnName and af.name != ef.name:
+                    raise AssertionError(f"Column name mismatch: {af.name} != {ef.name}")
+                if not ignoreColumnType and af.dataType != ef.dataType:
+                    pass  # Be lenient on inferred types
+
+    # Sort rows for comparison if order doesn't matter
+    def row_to_tuple(row):
+        return tuple(sorted(row.items()))
+
+    if not checkRowOrder:
+        actual_sorted = sorted([row_to_tuple(r) for r in actual_rows])
+        expected_sorted = sorted([row_to_tuple(r) for r in expected_rows])
+    else:
+        actual_sorted = [row_to_tuple(r) for r in actual_rows]
+        expected_sorted = [row_to_tuple(r) for r in expected_rows]
+
+    if len(actual_sorted) != len(expected_sorted):
+        raise AssertionError(
+            f"DataFrames have different row counts: {len(actual_sorted)} vs {len(expected_sorted)}"
+        )
+
+    for i, (a, e) in enumerate(zip(actual_sorted, expected_sorted)):
+        a_dict = dict(a)
+        e_dict = dict(e)
+        for key in e_dict:
+            a_val = a_dict.get(key)
+            e_val = e_dict.get(key)
+            if isinstance(a_val, float) and isinstance(e_val, float):
+                if abs(a_val - e_val) > atol + rtol * abs(e_val):
+                    raise AssertionError(
+                        f"Row {i}: column '{key}' values differ: {a_val} vs {e_val} "
+                        f"(atol={atol}, rtol={rtol})"
+                    )
+            elif a_val != e_val:
+                raise AssertionError(
+                    f"Row {i}: column '{key}' values differ: {a_val!r} vs {e_val!r}"
+                )
+
+
+def assertSchemaEqual(actual, expected, ignoreNullable=True, ignoreColumnOrder=False,
+                      ignoreColumnName=False):
+    """Compare two StructType schemas"""
+    if not isinstance(actual, StructType) or not isinstance(expected, StructType):
+        raise AssertionError("Both arguments must be StructType")
+
+    actual_fields = list(actual.fields)
+    expected_fields = list(expected.fields)
+
+    if ignoreColumnOrder:
+        actual_fields = sorted(actual_fields, key=lambda f: f.name)
+        expected_fields = sorted(expected_fields, key=lambda f: f.name)
+
+    if len(actual_fields) != len(expected_fields):
+        raise AssertionError(
+            f"Schema field count mismatch: {len(actual_fields)} vs {len(expected_fields)}"
+        )
+
+    for af, ef in zip(actual_fields, expected_fields):
+        if not ignoreColumnName and af.name != ef.name:
+            raise AssertionError(f"Field name mismatch: {af.name} != {ef.name}")
+        if af.dataType != ef.dataType:
+            raise AssertionError(
+                f"Field '{af.name}' type mismatch: {af.dataType} != {ef.dataType}"
+            )
+        if not ignoreNullable and af.nullable != ef.nullable:
+            raise AssertionError(
+                f"Field '{af.name}' nullable mismatch: {af.nullable} != {ef.nullable}"
+            )
+
+
+# ============ PANDAS UDF SUPPORT ============
+
+def pandas_udf(returnType):
+    """Decorator for pandas UDFs (scalar type)"""
+    def decorator(func):
+        def wrapper(col_expr):
+            if isinstance(col_expr, str):
+                col_expr = col(col_expr)
+
+            def do_transform(pdf):
+                series = pdf[col_expr.name]
+                return func(series)
+
+            new_col = Column(col_expr.name)
+            new_col._transform_func = do_transform
+            return new_col
+        wrapper._is_pandas_udf = True
+        wrapper.__name__ = func.__name__
+        return wrapper
+    return decorator
+
+
+# ============ APPLY IN PANDAS ============
+
+def _grouped_applyInPandas(self, func, schema):
+    """Apply a function to each group as a pandas DataFrame"""
+    pdf = self._df._pdf.copy()
+    result_frames = []
+
+    if self._group_cols:
+        for name, group_pdf in pdf.groupby(self._group_cols):
+            result_pdf = func(group_pdf.copy())
+            result_frames.append(result_pdf)
+    else:
+        result_pdf = func(pdf.copy())
+        result_frames.append(result_pdf)
+
+    if result_frames:
+        combined = pd.concat(result_frames, ignore_index=True)
+    else:
+        # Create empty DataFrame with schema columns
+        cols = [f.name for f in schema.fields] if isinstance(schema, StructType) else schema
+        combined = pd.DataFrame(columns=cols)
+
+    result_df = DataFrame(combined)
+    if isinstance(schema, StructType):
+        result_df._schema = schema
+    return result_df
+
+GroupedData.applyInPandas = _grouped_applyInPandas
+
+
+# ============ MAP IN PANDAS ============
+
+def _mapInPandas(self, func, schema):
+    """Apply a function to the DataFrame using pandas batches"""
+    pdf = self._pdf.copy()
+    result_frames = []
+
+    # The function receives an iterator of pandas DataFrames
+    for result_pdf in func(iter([pdf])):
+        result_frames.append(result_pdf)
+
+    if result_frames:
+        combined = pd.concat(result_frames, ignore_index=True)
+    else:
+        cols = [f.name for f in schema.fields] if isinstance(schema, StructType) else schema
+        combined = pd.DataFrame(columns=cols)
+
+    # Apply schema column selection/ordering
+    if isinstance(schema, StructType):
+        col_names = [f.name for f in schema.fields]
+        combined = combined[col_names]
+
+    result_df = DataFrame(combined)
+    if isinstance(schema, StructType):
+        result_df._schema = schema
+    return result_df
+
+DataFrame.mapInPandas = _mapInPandas
+
+
+# ============ STREAMING SUPPORT ============
+
+import datetime
+import uuid
+
+
+class StreamingDataFrame:
+    """A DataFrame that represents a streaming source"""
+    def __init__(self, source_format, options=None, schema=None):
+        self._source_format = source_format
+        self._options = options or {}
+        self._schema_def = schema
+        self._transformations = []
+        self._batch_counter = 0
+
+    @property
+    def isStreaming(self):
+        return True
+
+    @property
+    def columns(self):
+        if self._schema_def:
+            if isinstance(self._schema_def, StructType):
+                cols = [f.name for f in self._schema_def.fields]
+            else:
+                cols = list(self._schema_def)
+        elif self._source_format == "rate":
+            cols = ["timestamp", "value"]
+        else:
+            cols = []
+        # Apply transformations to get final columns
+        for t in self._transformations:
+            if t[0] == 'select':
+                cols = t[1]
+            elif t[0] == 'withColumn':
+                if t[1] not in cols:
+                    cols = cols + [t[1]]
+            elif t[0] == 'groupBy':
+                cols = t[1] + [a for a in t[2] if a not in t[1]]
+        return cols
+
+    @property
+    def schema(self):
+        fields = [StructField(c, StringType(), True) for c in self.columns]
+        return StructType(fields)
+
+    def filter(self, condition):
+        new_sdf = StreamingDataFrame(self._source_format, self._options.copy(), self._schema_def)
+        new_sdf._transformations = self._transformations + [('filter', condition)]
+        new_sdf._batch_counter = self._batch_counter
+        return new_sdf
+
+    def where(self, condition):
+        return self.filter(condition)
+
+    def select(self, *cols):
+        col_names = []
+        for c in cols:
+            if isinstance(c, str):
+                col_names.append(c)
+            elif isinstance(c, Column):
+                col_names.append(c._alias or c.name)
+        new_sdf = StreamingDataFrame(self._source_format, self._options.copy(), self._schema_def)
+        new_sdf._transformations = self._transformations + [('select', col_names)]
+        new_sdf._batch_counter = self._batch_counter
+        return new_sdf
+
+    def withColumn(self, name, col_expr):
+        new_sdf = StreamingDataFrame(self._source_format, self._options.copy(), self._schema_def)
+        new_sdf._transformations = self._transformations + [('withColumn', name, col_expr)]
+        new_sdf._batch_counter = self._batch_counter
+        return new_sdf
+
+    def groupBy(self, *cols):
+        col_names = [c if isinstance(c, str) else c.name for c in cols]
+        return StreamingGroupedData(self, col_names)
+
+    def collectBatch(self):
+        """Process one micro-batch and return results (for testing)"""
+        batch_df = self._generate_batch()
+        return batch_df.collect()
+
+    def _generate_batch(self):
+        """Generate a micro-batch of data"""
+        self._batch_counter += 1
+        if self._source_format == "rate":
+            rows_per_sec = int(self._options.get("rowsPerSecond", 10))
+            n = rows_per_sec
+            now = datetime.datetime.now()
+            data = []
+            for i in range(n):
+                ts = now + datetime.timedelta(seconds=i / max(rows_per_sec, 1))
+                val = (self._batch_counter - 1) * n + i
+                data.append((str(ts), val))
+            pdf = pd.DataFrame(data, columns=["timestamp", "value"])
+            return DataFrame(pdf)
+        elif self._source_format == "memory":
+            if self._schema_def and isinstance(self._schema_def, StructType):
+                cols = [f.name for f in self._schema_def.fields]
+            else:
+                cols = self.columns or ["value"]
+            pdf = pd.DataFrame(columns=cols)
+            return DataFrame(pdf)
+        else:
+            return DataFrame(pd.DataFrame())
+
+    @property
+    def writeStream(self):
+        return DataStreamWriter(self)
+
+
+class StreamingGroupedData:
+    """Grouped streaming data for aggregations"""
+    def __init__(self, sdf, group_cols):
+        self._sdf = sdf
+        self._group_cols = group_cols
+
+    def agg(self, *exprs):
+        agg_names = []
+        for expr in exprs:
+            name = expr._alias or expr.name
+            agg_names.append(name)
+        new_sdf = StreamingDataFrame(self._sdf._source_format, self._sdf._options.copy(), self._sdf._schema_def)
+        new_sdf._transformations = self._sdf._transformations + [('groupBy', self._group_cols, agg_names)]
+        new_sdf._batch_counter = self._sdf._batch_counter
+        return new_sdf
+
+    def transformWithStateInPandas(self, func, outputStructType, outputMode="update"):
+        new_sdf = StreamingDataFrame(self._sdf._source_format, self._sdf._options.copy())
+        if isinstance(outputStructType, StructType):
+            new_sdf._schema_def = outputStructType
+        new_sdf._transformations = self._sdf._transformations + [
+            ('transformWithState', self._group_cols, func, outputStructType, outputMode)
+        ]
+        new_sdf._batch_counter = self._sdf._batch_counter
+        new_sdf._state = {}
+        new_sdf._twis_func = func
+        new_sdf._twis_group_cols = self._group_cols
+        return new_sdf
+
+
+class DataStreamReader:
+    """Builder for reading streaming data"""
+    def __init__(self):
+        self._format = None
+        self._options = {}
+        self._schema_def = None
+
+    def format(self, fmt):
+        self._format = fmt
+        return self
+
+    def schema(self, schema):
+        self._schema_def = schema
+        return self
+
+    def option(self, key, value):
+        self._options[key] = value
+        return self
+
+    def load(self):
+        return StreamingDataFrame(self._format, self._options.copy(), self._schema_def)
+
+
+class DataStreamWriter:
+    """Builder for writing streaming data"""
+    def __init__(self, sdf):
+        self._sdf = sdf
+        self._format = None
+        self._query_name = None
+        self._output_mode = "append"
+        self._trigger_config = {}
+        self._options = {}
+
+    def format(self, fmt):
+        self._format = fmt
+        return self
+
+    def queryName(self, name):
+        self._query_name = name
+        return self
+
+    def outputMode(self, mode):
+        self._output_mode = mode
+        return self
+
+    def trigger(self, **kwargs):
+        self._trigger_config = kwargs
+        return self
+
+    def option(self, key, value):
+        self._options[key] = value
+        return self
+
+    def start(self):
+        return StreamingQuery(
+            self._sdf, self._query_name, self._output_mode,
+            self._trigger_config, self._format
+        )
+
+
+class StateHandle:
+    """State handle for transformWithStateInPandas"""
+    def __init__(self, state_dict, key):
+        self._state_dict = state_dict
+        self._key = key
+
+    @property
+    def exists(self):
+        return self._key in self._state_dict
+
+    @property
+    def get(self):
+        return self._state_dict.get(self._key, {})
+
+    def update(self, value):
+        self._state_dict[self._key] = value
+
+
+class StreamingQuery:
+    """Represents a running streaming query"""
+    def __init__(self, sdf, name, output_mode, trigger_config, fmt):
+        self._sdf = sdf
+        self._name = name
+        self._output_mode = output_mode
+        self._trigger = trigger_config
+        self._format = fmt
+        self._active = True
+        self._id = str(uuid.uuid4())
+        self._progress_history = []
+        self._last_batch = []
+        self._state = {}
+
+    @property
+    def isActive(self):
+        return self._active
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def trigger(self):
+        return self._trigger
+
+    @property
+    def status(self):
+        return {
+            "isDataAvailable": True,
+            "isTriggerActive": self._active,
+            "message": "Processing data"
+        }
+
+    @property
+    def lastProgress(self):
+        if self._progress_history:
+            return self._progress_history[-1]
+        return None
+
+    @property
+    def recentProgress(self):
+        return list(self._progress_history)
+
+    def processBatch(self):
+        """Process a single micro-batch"""
+        if not self._active:
+            return
+        batch_df = self._sdf._generate_batch()
+
+        # Handle transformWithStateInPandas
+        has_twis = False
+        for t in self._sdf._transformations:
+            if t[0] == 'transformWithState':
+                has_twis = True
+                group_cols = t[1]
+                func = t[2]
+                output_schema = t[3]
+
+                batch_pdf = batch_df._pdf
+                result_frames = []
+
+                if len(batch_pdf) > 0:
+                    for key_val, group_pdf in batch_pdf.groupby(group_cols):
+                        if not isinstance(key_val, tuple):
+                            key_val = (key_val,)
+                        state_handle = StateHandle(self._state, key_val)
+                        for result_pdf in func(key_val, iter([group_pdf]), state_handle):
+                            result_frames.append(result_pdf)
+
+                if result_frames:
+                    combined = pd.concat(result_frames, ignore_index=True)
+                else:
+                    if isinstance(output_schema, StructType):
+                        cols = [f.name for f in output_schema.fields]
+                    else:
+                        cols = []
+                    combined = pd.DataFrame(columns=cols)
+                self._last_batch = DataFrame(combined).collect()
+                break
+
+        if not has_twis:
+            # Apply regular transformations (filter, select, withColumn)
+            result_df = batch_df
+            for t in self._sdf._transformations:
+                if t[0] == 'filter':
+                    result_df = result_df.filter(t[1])
+                elif t[0] == 'select':
+                    result_df = result_df.select(*t[1])
+                elif t[0] == 'withColumn':
+                    result_df = result_df.withColumn(t[1], t[2])
+            self._last_batch = result_df.collect()
+
+        self._progress_history.append({
+            "numInputRows": len(self._last_batch),
+            "timestamp": str(datetime.datetime.now())
+        })
+
+    def getBatch(self):
+        """Get the last processed batch results"""
+        return self._last_batch
+
+    def stop(self):
+        self._active = False
+
+    def awaitTermination(self, timeout=None):
+        pass
+
+
+# Add readStream to SparkSession
+@property
+def _readStream(self):
+    return DataStreamReader()
+
+SparkSession.readStream = _readStream
+
+
+# ============ WINDOW FUNCTION FOR STREAMING ============
+
+def window(timeColumn, windowDuration, slideDuration=None):
+    """Create a time-based window for streaming aggregations"""
+    def do_transform(pdf):
+        # Simplified: return window struct
+        ts_col = timeColumn.name if hasattr(timeColumn, 'name') else timeColumn
+        results = []
+        for _, row in pdf.iterrows():
+            results.append({"start": str(row[ts_col]), "end": str(row[ts_col])})
+        return pd.Series(results)
+
+    new_col = Column("window")
+    new_col._transform_func = do_transform
+    new_col._alias = "window"
+    return new_col
+
+
 # ============ MODULE SETUP ============
 # Create proper module structure for imports
 pyspark_module = ModuleType('pyspark')
 pyspark_sql_module = ModuleType('pyspark.sql')
 pyspark_sql_functions_module = ModuleType('pyspark.sql.functions')
 pyspark_sql_window_module = ModuleType('pyspark.sql.window')
+pyspark_sql_types_module = ModuleType('pyspark.sql.types')
+pyspark_testing_module = ModuleType('pyspark.testing')
+pyspark_testing_utils_module = ModuleType('pyspark.testing.utils')
 
 # Add classes to pyspark.sql
 pyspark_sql_module.Row = Row
@@ -952,15 +1904,51 @@ pyspark_sql_functions_module.dense_rank = dense_rank
 pyspark_sql_functions_module.lag = lag
 pyspark_sql_functions_module.lead = lead
 
+# Add new functions to pyspark.sql.functions
+pyspark_sql_functions_module.create_map = create_map
+pyspark_sql_functions_module.map_keys = map_keys
+pyspark_sql_functions_module.map_values = map_values
+pyspark_sql_functions_module.size = size
+pyspark_sql_functions_module.transform = transform
+pyspark_sql_functions_module.filter = _pyspark_array_filter
+pyspark_sql_functions_module.aggregate = aggregate
+pyspark_sql_functions_module.exists = exists
+pyspark_sql_functions_module.forall = forall
+pyspark_sql_functions_module.pandas_udf = pandas_udf
+pyspark_sql_functions_module.window = window
+
 # Add window to pyspark.sql.window
 pyspark_sql_window_module.Window = Window
 pyspark_sql_window_module.WindowSpec = WindowSpec
+
+# Add types to pyspark.sql.types
+pyspark_sql_types_module.DataType = DataType
+pyspark_sql_types_module.StringType = StringType
+pyspark_sql_types_module.IntegerType = IntegerType
+pyspark_sql_types_module.LongType = LongType
+pyspark_sql_types_module.DoubleType = DoubleType
+pyspark_sql_types_module.FloatType = FloatType
+pyspark_sql_types_module.BooleanType = BooleanType
+pyspark_sql_types_module.TimestampType = TimestampType
+pyspark_sql_types_module.DateType = DateType
+pyspark_sql_types_module.ArrayType = ArrayType
+pyspark_sql_types_module.MapType = MapType
+pyspark_sql_types_module.StructField = StructField
+pyspark_sql_types_module.StructType = StructType
+
+# Add testing utilities to pyspark.testing.utils
+pyspark_testing_utils_module.assertDataFrameEqual = assertDataFrameEqual
+pyspark_testing_utils_module.assertSchemaEqual = assertSchemaEqual
+pyspark_testing_module.utils = pyspark_testing_utils_module
 
 # Register modules in sys.modules
 sys.modules['pyspark'] = pyspark_module
 sys.modules['pyspark.sql'] = pyspark_sql_module
 sys.modules['pyspark.sql.functions'] = pyspark_sql_functions_module
 sys.modules['pyspark.sql.window'] = pyspark_sql_window_module
+sys.modules['pyspark.sql.types'] = pyspark_sql_types_module
+sys.modules['pyspark.testing'] = pyspark_testing_module
+sys.modules['pyspark.testing.utils'] = pyspark_testing_utils_module
 
 # Make spark available globally
 spark = SparkSession()

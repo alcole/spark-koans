@@ -6,7 +6,7 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import { getKoan, getAllKoanIds, getKoanStats } from '../../src/koans';
+import { getKoan, getAllKoanIds, getKoanStats, getTrackForKoan, getKoanIdsByTrack, TRACKS } from '../../src/koans';
 import KoanEditor from '../../src/components/KoanEditor';
 import OutputPanel from '../../src/components/OutputPanel';
 import KoanHeader from '../../src/components/KoanHeader';
@@ -33,7 +33,9 @@ export default function KoanPage({ koan }) {
 
   const { pyodide, isLoading, error: pyodideError, loadDeltaShim, shimsLoaded } = usePyodide();
   const { markComplete, isComplete, progress } = useKoanProgress();
-  const stats = getKoanStats();
+  const currentTrack = koan ? getTrackForKoan(koan.id) : 'standard';
+  const trackIds = getKoanIdsByTrack(currentTrack);
+  const trackDef = TRACKS[currentTrack];
 
   // Initialize code when koan changes
   useEffect(() => {
@@ -99,15 +101,14 @@ _stdout_capture.getvalue()
         const wasAlreadyComplete = isComplete(koan.id);
         markComplete(koan.id);
 
-        // Check if this completion means ALL koans are now complete
+        // Check if this completion means all koans in the current track are complete
         if (!wasAlreadyComplete) {
-          // Need to check with the new progress count
           setTimeout(() => {
-            const newCompletedCount = progress.size + 1;
-            if (newCompletedCount === stats.total) {
+            const trackCompleted = trackIds.filter(id => progress.has(id) || id === koan.id).length;
+            if (trackCompleted === trackIds.length) {
               setShowCompletionModal(true);
             }
-          }, 1000); // Small delay for celebration effect
+          }, 1000);
         }
       }
     } catch (err) {
@@ -141,14 +142,10 @@ _stdout_capture.getvalue()
     router.push(`/koans/${newId}`);
   };
 
-  // Get next/previous koan IDs
-  const allIds = getAllKoanIds();
-  const currentIndex = allIds.indexOf(koan.id);
-  const prevKoanId = currentIndex > 0 ? allIds[currentIndex - 1] : null;
-  const nextKoanId = currentIndex < allIds.length - 1 ? allIds[currentIndex + 1] : null;
-
-  const difficulty = koan.difficulty || 'beginner';
-  const ogImageUrl = `${BASE_URL}/api/og-koan?${new URLSearchParams({ title: koan.title, category: koan.category, difficulty })}`;
+  // Get next/previous koan IDs within the current track
+  const currentIndex = trackIds.indexOf(koan.id);
+  const prevKoanId = currentIndex > 0 ? trackIds[currentIndex - 1] : null;
+  const nextKoanId = currentIndex < trackIds.length - 1 ? trackIds[currentIndex + 1] : null;
 
   if (!koan) {
     return (
@@ -157,6 +154,9 @@ _stdout_capture.getvalue()
       </div>
     );
   }
+
+  const difficulty = koan.difficulty || 'beginner';
+  const ogImageUrl = `${BASE_URL}/api/og-koan?${new URLSearchParams({ title: koan.title, category: koan.category, difficulty })}`;
 
   return (
     <>
@@ -198,7 +198,9 @@ _stdout_capture.getvalue()
       <CompletionModal
         isOpen={showCompletionModal}
         onClose={() => setShowCompletionModal(false)}
-        totalKoans={stats.total}
+        totalKoans={trackIds.length}
+        badgePage={trackDef.badgePage}
+        trackName={trackDef.name}
       />
 
       {/* Mobile menu button */}
