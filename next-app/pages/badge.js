@@ -4,7 +4,14 @@
  *
  * Supports two modes:
  * 1. Owner view: User completed all koans (checked via localStorage)
+ *    - Shows download + share buttons
  * 2. Shared view: Visitor clicked a shared link with ?completed=1 query param
+ *    - Shows the badge with a CTA to try the koans themselves
+ *
+ * We wait for router.isReady before deciding which view to show,
+ * to avoid a flash of "Keep Going! 0 out of N" on shared links
+ * (since query params aren't available until after hydration on
+ * statically generated pages).
  */
 
 import { useEffect, useState } from 'react';
@@ -20,12 +27,23 @@ export default function Certificate() {
   const { progress } = useKoanProgress();
   const [isDownloading, setIsDownloading] = useState(false);
   const [completionDate, setCompletionDate] = useState('');
+  const [ready, setReady] = useState(false);
 
-  // Detect shared badge link via query param
-  const isSharedView = router.query.completed === '1';
+  // Wait for both router query params AND localStorage to be loaded
+  // before deciding which view to render. This prevents flash of
+  // "Keep Going! 0/40" when a visitor opens a shared link.
+  useEffect(() => {
+    if (router.isReady) {
+      // Small delay to let useKoanProgress hydrate from localStorage too
+      const timer = setTimeout(() => setReady(true), 50);
+      return () => clearTimeout(timer);
+    }
+  }, [router.isReady]);
+
+  // Detect shared badge link via query param (only after router is ready)
+  const isSharedView = ready && router.query.completed === '1';
 
   useEffect(() => {
-    // Set completion date
     const today = new Date().toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -126,7 +144,7 @@ export default function Certificate() {
         <meta name="twitter:title" content="Completed all PySpark Koans!" />
         <meta name="twitter:description" content={`Successfully completed all ${stats.total} PySpark and Delta Lake exercises.`} />
         <meta name="twitter:image" content={ogImageUrl} />
-        <link rel="canonical" href="https://spark-koans.com/badge" />
+        <link rel="canonical" href={`${shareUrl}/badge?completed=1`} />
       </Head>
 
       <div className="min-h-screen bg-gray-950 text-gray-100 py-12 px-4">
@@ -135,7 +153,20 @@ export default function Certificate() {
             &larr; Back to Home
           </Link>
 
-        {!showBadge ? (
+        {!ready ? (
+          /* Loading state while we wait for query params + localStorage to hydrate.
+             Shows the badge image immediately so the visitor sees something meaningful
+             rather than a spinner or blank page. */
+          <div className="flex justify-center mb-8">
+            <div className="max-w-md">
+              <img
+                src="/assets/badge.png"
+                alt="PySpark Koans Master Badge"
+                className="w-full h-auto drop-shadow-2xl opacity-80"
+              />
+            </div>
+          </div>
+        ) : !showBadge ? (
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-12 text-center">
             <h1 className="text-3xl font-bold mb-4">Keep Going!</h1>
             <p className="text-gray-400 mb-4">
