@@ -256,6 +256,12 @@ _stdout_capture.getvalue()
           <div className="max-w-6xl mx-auto">
             <KoanHeader koan={koan} isComplete={isComplete(koan.id)} />
 
+            {progress.size === 0 && (
+              <div className="bg-blue-900/20 border border-blue-800/40 rounded-lg p-4 mt-4 text-sm text-blue-200/80">
+                <strong className="text-blue-300">How it works:</strong> Replace the <code className="bg-gray-800 px-1.5 py-0.5 rounded text-orange-400">___</code> blanks in the code editor with the correct PySpark code, then hit <strong>Run Code</strong>. Stuck? Try the <strong>Hint</strong> button.
+              </div>
+            )}
+
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
               {/* Left column */}
               <div className="space-y-4">
