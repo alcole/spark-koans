@@ -20,20 +20,28 @@ export default function usePyodide() {
   });
 
   useEffect(() => {
+    // Yield to the browser event loop so pending keystrokes / paints
+    // can be processed between heavy WASM compilation steps.
+    const yieldToMain = () => new Promise((resolve) => setTimeout(resolve, 0));
+
     async function initPyodide() {
       setIsLoading(true);
       try {
-        // Load Pyodide
+        // Load Pyodide (heavy WASM compile)
         const pyodideInstance = await window.loadPyodide({
           indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/'
         });
+        await yieldToMain();
 
-        // Load pandas
+        // Load pandas (heavy WASM compile)
         await pyodideInstance.loadPackage(['pandas']);
+        await yieldToMain();
 
         // Load PySpark shim
         const pysparkShimResponse = await fetch(PYSPARK_SHIM_URL);
         const pysparkShim = await pysparkShimResponse.text();
+        await yieldToMain();
+
         await pyodideInstance.runPythonAsync(pysparkShim);
 
         setShimsLoaded(prev => ({ ...prev, pyspark: true }));
