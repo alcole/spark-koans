@@ -24,6 +24,8 @@ export default function Home() {
         <meta name="twitter:description" content="Master PySpark and Delta Lake through interactive exercises. Learn by doing with hands-on koans." />
         <meta name="twitter:image" content="https://spark-koans.com/api/og-homepage" />
         <link rel="canonical" href="https://spark-koans.com/" />
+        <link rel="prefetch" href="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js" />
+        <link rel="prefetch" href="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.asm.wasm" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "WebSite",
