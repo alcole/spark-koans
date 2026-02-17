@@ -299,7 +299,6 @@ _stdout_capture.getvalue()
                   code={code}
                   onChange={setCode}
                   onRun={runCode}
-                  isLoading={isLoading}
                 />
 
                 <Controls

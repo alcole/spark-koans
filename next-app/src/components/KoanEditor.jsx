@@ -5,7 +5,7 @@
 
 import { useRef } from 'react';
 
-export default function KoanEditor({ code, onChange, onRun, isLoading }) {
+export default function KoanEditor({ code, onChange, onRun }) {
   const textareaRef = useRef(null);
 
   const handleKeyDown = (e) => {
@@ -41,7 +41,6 @@ export default function KoanEditor({ code, onChange, onRun, isLoading }) {
         onKeyDown={handleKeyDown}
         className="w-full h-64 p-4 bg-gray-950 text-gray-100 font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-orange-500/50"
         spellCheck={false}
-        disabled={isLoading}
       />
     </div>
   );
