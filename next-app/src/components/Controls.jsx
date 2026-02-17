@@ -20,7 +20,7 @@ export default function Controls({
         disabled={isLoading}
         className="px-4 py-2 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-700 disabled:text-gray-500 rounded-lg font-medium transition-colors"
       >
-        {isLoading ? 'Loading...' : 'Run Code'}
+        {isLoading ? 'Preparing environment\u2026' : 'Run Code'}
       </button>
       <button
         onClick={onHint}

@@ -14,6 +14,7 @@ import HintPanel from '../../src/components/HintPanel';
 import Controls from '../../src/components/Controls';
 import Sidebar from '../../src/components/Sidebar';
 import CompletionModal from '../../src/components/CompletionModal';
+import SuccessBanner from '../../src/components/SuccessBanner';
 import usePyodide from '../../src/hooks/usePyodide';
 import useKoanProgress from '../../src/hooks/useKoanProgress';
 import { parseAndFormatError, detectUnreplacedPlaceholders } from '../../src/utils/errorParser';
@@ -30,6 +31,7 @@ export default function KoanPage({ koan }) {
   const [showSolution, setShowSolution] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [justCompleted, setJustCompleted] = useState(false);
 
   const { pyodide, isLoading, error: pyodideError, loadDeltaShim, shimsLoaded } = usePyodide();
   const { markComplete, isComplete, progress } = useKoanProgress();
@@ -44,6 +46,7 @@ export default function KoanPage({ koan }) {
       setShowHints(false);
       setCurrentHint(0);
       setShowSolution(false);
+      setJustCompleted(false);
     }
   }, [koan]);
 
@@ -98,6 +101,9 @@ _stdout_capture.getvalue()
       if (capturedOutput.includes('🎉 Koan complete!')) {
         const wasAlreadyComplete = isComplete(koan.id);
         markComplete(koan.id);
+        if (!wasAlreadyComplete) {
+          setJustCompleted(true);
+        }
 
         // Check if this completion means ALL koans are now complete
         if (!wasAlreadyComplete) {
@@ -250,6 +256,12 @@ _stdout_capture.getvalue()
           <div className="max-w-6xl mx-auto">
             <KoanHeader koan={koan} isComplete={isComplete(koan.id)} />
 
+            {progress.size === 0 && (
+              <div className="bg-blue-900/20 border border-blue-800/40 rounded-lg p-4 mt-4 text-sm text-blue-200/80">
+                <strong className="text-blue-300">How it works:</strong> Replace the <code className="bg-gray-800 px-1.5 py-0.5 rounded text-orange-400">___</code> blanks in the code editor with the correct PySpark code, then hit <strong>Run Code</strong>. Stuck? Try the <strong>Hint</strong> button.
+              </div>
+            )}
+
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
               {/* Left column */}
               <div className="space-y-4">
@@ -287,7 +299,6 @@ _stdout_capture.getvalue()
                   code={code}
                   onChange={setCode}
                   onRun={runCode}
-                  isLoading={isLoading}
                 />
 
                 <Controls
@@ -304,6 +315,10 @@ _stdout_capture.getvalue()
 
                 <OutputPanel output={output} error={error} />
 
+                {justCompleted && (
+                  <SuccessBanner nextKoanId={nextKoanId} onNavigate={navigateToKoan} />
+                )}
+
                 {/* Navigation */}
                 <div className="flex justify-between">
                   <button
@@ -316,7 +331,11 @@ _stdout_capture.getvalue()
                   <button
                     onClick={() => navigateToKoan(nextKoanId)}
                     disabled={!nextKoanId}
-                    className="px-4 py-2 bg-gray-800 hover:bg-gray-700 disabled:bg-gray-900 disabled:text-gray-700 rounded-lg transition-colors"
+                    className={`px-4 py-2 rounded-lg transition-colors ${
+                      isComplete(koan.id)
+                        ? 'bg-orange-600 hover:bg-orange-500 text-white'
+                        : 'bg-gray-800 hover:bg-gray-700 disabled:bg-gray-900 disabled:text-gray-700'
+                    }`}
                   >
                     Next →
                   </button>
