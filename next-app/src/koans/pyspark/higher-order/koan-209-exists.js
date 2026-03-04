@@ -12,7 +12,7 @@ const koan = {
   setup: `
 data = [
     ("Alice", [10, 20, 30]),
-    ("Bob", [5, 15, 25, 35]),
+    ("Bob", [4, 15, 25, 35]),
     ("Carol", [100, 200])
 ]
 df = spark.createDataFrame(data, ["name", "values"])
@@ -41,7 +41,7 @@ has_even = df.select(
 )
 
 bob_even = has_even.filter(col("name") == "Bob").collect()[0]["has_even"]
-assert bob_even == True, "Bob has even values (e.g. 15 is odd but check all)"
+assert bob_even == True, "Bob has an even value (4)"
 print("\\u2713 exists() with modulo condition")
 
 print("\\n\\ud83c\\udf89 Koan complete! You've mastered exists().")`,
