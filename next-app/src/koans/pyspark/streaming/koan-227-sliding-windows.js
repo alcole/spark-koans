@@ -1,10 +1,10 @@
 /**
- * Koan 223: Sliding Windows
+ * Koan 227: Sliding Windows
  * Category: Structured Streaming
  */
 
 const koan = {
-  id: 223,
+  id: 227,
   title: "Sliding Windows",
   category: "Structured Streaming",
   difficulty: "advanced",

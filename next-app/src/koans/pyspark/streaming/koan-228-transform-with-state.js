@@ -1,10 +1,10 @@
 /**
- * Koan 224: transformWithStateInPandas
+ * Koan 228: transformWithStateInPandas
  * Category: Structured Streaming
  */
 
 const koan = {
-  id: 224,
+  id: 228,
   title: "transformWithStateInPandas",
   category: "Structured Streaming",
   difficulty: "advanced",

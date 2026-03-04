@@ -1,10 +1,10 @@
 /**
- * Koan 216: mapInPandas (Row-wise)
+ * Koan 219: mapInPandas (Row-wise)
  * Category: Pandas Integration
  */
 
 const koan = {
-  id: 216,
+  id: 219,
   title: "mapInPandas - Row-wise Processing",
   category: "Pandas Integration",
   difficulty: "advanced",

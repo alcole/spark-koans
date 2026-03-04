@@ -1,10 +1,10 @@
 /**
- * Koan 211: assertSchemaEqual
+ * Koan 214: assertSchemaEqual
  * Category: Testing
  */
 
 const koan = {
-  id: 211,
+  id: 214,
   title: "assertSchemaEqual",
   category: "Testing",
   difficulty: "advanced",

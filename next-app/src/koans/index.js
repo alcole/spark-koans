@@ -54,22 +54,26 @@ import koan205 from './pyspark/schemas/koan-205-schema-enforcement';
 import koan206 from './pyspark/higher-order/koan-206-transform';
 import koan207 from './pyspark/higher-order/koan-207-filter-arrays';
 import koan208 from './pyspark/higher-order/koan-208-aggregate-arrays';
-import koan209 from './pyspark/testing/koan-209-assert-dataframe-equal';
-import koan210 from './pyspark/testing/koan-210-assert-dataframe-advanced';
-import koan211 from './pyspark/testing/koan-211-assert-schema-equal';
-import koan212 from './pyspark/testing/koan-212-testing-patterns';
-import koan213 from './pyspark/pandas-integration/koan-213-topandas-and-back';
-import koan214 from './pyspark/pandas-integration/koan-214-pandas-udf-scalar';
-import koan215 from './pyspark/pandas-integration/koan-215-apply-in-pandas';
-import koan216 from './pyspark/pandas-integration/koan-216-map-in-pandas';
-import koan217 from './pyspark/streaming/koan-217-rate-source';
-import koan218 from './pyspark/streaming/koan-218-datastreamreader';
-import koan219 from './pyspark/streaming/koan-219-streaming-transformations';
-import koan220 from './pyspark/streaming/koan-220-streaming-queries';
-import koan221 from './pyspark/streaming/koan-221-stream-triggers';
-import koan222 from './pyspark/streaming/koan-222-monitoring-streams';
-import koan223 from './pyspark/streaming/koan-223-sliding-windows';
-import koan224 from './pyspark/streaming/koan-224-transform-with-state';
+import koan209 from './pyspark/higher-order/koan-209-exists';
+import koan210 from './pyspark/higher-order/koan-210-forall';
+import koan211 from './pyspark/testing/koan-211-assert-dataframe-equal';
+import koan212 from './pyspark/testing/koan-212-assert-tolerance';
+import koan213 from './pyspark/testing/koan-213-assert-row-order';
+import koan214 from './pyspark/testing/koan-214-assert-schema-equal';
+import koan215 from './pyspark/testing/koan-215-testing-patterns';
+import koan216 from './pyspark/pandas-integration/koan-216-topandas-and-back';
+import koan217 from './pyspark/pandas-integration/koan-217-pandas-udf-scalar';
+import koan218 from './pyspark/pandas-integration/koan-218-apply-in-pandas';
+import koan219 from './pyspark/pandas-integration/koan-219-map-in-pandas';
+import koan220 from './pyspark/streaming/koan-220-rate-source';
+import koan221 from './pyspark/streaming/koan-221-datastreamreader';
+import koan222 from './pyspark/streaming/koan-222-streaming-transformations';
+import koan223 from './pyspark/streaming/koan-223-streaming-queries';
+import koan224 from './pyspark/streaming/koan-224-processing-time-trigger';
+import koan225 from './pyspark/streaming/koan-225-available-now-trigger';
+import koan226 from './pyspark/streaming/koan-226-monitoring-streams';
+import koan227 from './pyspark/streaming/koan-227-sliding-windows';
+import koan228 from './pyspark/streaming/koan-228-transform-with-state';
 
 /**
  * All koans indexed by ID
@@ -138,6 +142,10 @@ const koansById = {
   222: koan222,
   223: koan223,
   224: koan224,
+  225: koan225,
+  226: koan226,
+  227: koan227,
+  228: koan228,
 };
 
 /**

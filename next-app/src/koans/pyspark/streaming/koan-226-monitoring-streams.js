@@ -1,10 +1,10 @@
 /**
- * Koan 222: Monitoring Streams
+ * Koan 226: Monitoring Streams
  * Category: Structured Streaming
  */
 
 const koan = {
-  id: 222,
+  id: 226,
   title: "Monitoring Streams",
   category: "Structured Streaming",
   difficulty: "advanced",

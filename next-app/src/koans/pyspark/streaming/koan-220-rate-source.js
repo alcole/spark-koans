@@ -1,10 +1,10 @@
 /**
- * Koan 217: Rate Source
+ * Koan 220: Rate Source
  * Category: Structured Streaming
  */
 
 const koan = {
-  id: 217,
+  id: 220,
   title: "Rate Source for Testing",
   category: "Structured Streaming",
   difficulty: "intermediate",

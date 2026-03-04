@@ -1,10 +1,10 @@
 /**
- * Koan 212: Testing Patterns
+ * Koan 215: Testing Patterns
  * Category: Testing
  */
 
 const koan = {
-  id: 212,
+  id: 215,
   title: "Testing Patterns",
   category: "Testing",
   difficulty: "advanced",

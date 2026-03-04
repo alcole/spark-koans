@@ -1,10 +1,10 @@
 /**
- * Koan 215: applyInPandas (Grouped Map)
+ * Koan 218: applyInPandas (Grouped Map)
  * Category: Pandas Integration
  */
 
 const koan = {
-  id: 215,
+  id: 218,
   title: "applyInPandas - Grouped Map",
   category: "Pandas Integration",
   difficulty: "advanced",
